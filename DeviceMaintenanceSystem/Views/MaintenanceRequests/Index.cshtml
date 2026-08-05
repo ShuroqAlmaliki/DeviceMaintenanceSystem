@@ -1,41 +1,37 @@
-@model IEnumerable<DeviceMaintenanceSystem.Models.MaintenanceRequest>
+@model IEnumerable<DeviceMaintenanceSystem.Models.Notification>
 
 @{
-    ViewData["Title"] = "Maintenance Requests";
+    ViewData["Title"] = "Notifications";
     Layout = null;
 
-    var totalRequests = Model?.Count() ?? 0;
-
-    var pendingRequests = Model?.Count(x =>
-        x.RequestStatus != null &&
-        x.RequestStatus.ToLower() == "pending") ?? 0;
-
-    var completedRequests = Model?.Count(x =>
-        x.RequestStatus != null &&
-        x.RequestStatus.ToLower() == "completed") ?? 0;
+    var totalNotifications = Model?.Count() ?? 0;
+    var unreadNotifications = Model?.Count(x => !x.IsRead) ?? 0;
+    var readNotifications = Model?.Count(x => x.IsRead) ?? 0;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8" />
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0" />
 
-    <title>Maintenance Requests</title>
+    <title>Notifications</title>
 
     <link rel="stylesheet"
           href="~/css/site.css"
           asp-append-version="true" />
+
 </head>
 
 <body>
 
-    <div class="requests-page">
+    <div class="notifications-page">
 
-        <div class="requests-container">
+        <div class="notifications-container">
 
             <!-- TOP BAR -->
 
@@ -54,9 +50,10 @@
 
                 </div>
 
-                <a href="/Account/Login"
+                <a asp-controller="MaintenanceRequests"
+                   asp-action="Index"
                    class="back-button">
-                    Sign Out
+                    Back to Requests
                 </a>
 
             </div>
@@ -69,27 +66,16 @@
                 <div class="page-title">
 
                     <div class="small-title">
-                        MAINTENANCE MANAGEMENT
+                        SYSTEM NOTIFICATIONS
                     </div>
 
-                    <h1>
-                        Maintenance Requests
-                    </h1>
+                    <h1>Notifications</h1>
 
                     <p>
-                        View and manage all submitted maintenance requests.
+                        View your system notifications.
                     </p>
 
                 </div>
-
-                <a asp-controller="MaintenanceRequests"
-                   asp-action="Create"
-                   class="new-request">
-
-                    New Request
-                    <span>＋</span>
-
-                </a>
 
             </div>
 
@@ -101,12 +87,12 @@
                 <div class="stat-card">
 
                     <div class="stat-icon">
-                        📋
+                        🔔
                     </div>
 
                     <div class="stat-info">
-                        <p>Total Requests</p>
-                        <h2>@totalRequests</h2>
+                        <p>Total Notifications</p>
+                        <h2>@totalNotifications</h2>
                     </div>
 
                 </div>
@@ -115,12 +101,12 @@
                 <div class="stat-card">
 
                     <div class="stat-icon">
-                        ⏳
+                        ●
                     </div>
 
                     <div class="stat-info">
-                        <p>Pending</p>
-                        <h2>@pendingRequests</h2>
+                        <p>Unread</p>
+                        <h2>@unreadNotifications</h2>
                     </div>
 
                 </div>
@@ -133,8 +119,8 @@
                     </div>
 
                     <div class="stat-info">
-                        <p>Completed</p>
-                        <h2>@completedRequests</h2>
+                        <p>Read</p>
+                        <h2>@readNotifications</h2>
                     </div>
 
                 </div>
@@ -142,16 +128,16 @@
             </div>
 
 
-            <!-- REQUESTS LIST -->
+            <!-- NOTIFICATIONS LIST -->
 
-            <div class="requests-card">
+            <div class="notifications-card">
 
                 <div class="card-header">
 
-                    <h2>Requests List</h2>
+                    <h2>Notifications List</h2>
 
                     <p>
-                        All maintenance requests registered in the system.
+                        Your notifications registered in the system.
                     </p>
 
                 </div>
@@ -161,17 +147,16 @@
                 {
                     <div class="table-wrapper">
 
-                        <table class="requests-table">
+                        <table class="notifications-table">
 
                             <thead>
 
                                 <tr>
+                                    <th>ID</th>
                                     <th>Request ID</th>
-                                    <th>Device Name</th>
                                     <th>Description</th>
-                                    <th>Status</th>
                                     <th>Date</th>
-                                    <th>Actions</th>
+                                    <th>Status</th>
                                 </tr>
 
                             </thead>
@@ -183,86 +168,33 @@
                                     <tr>
 
                                         <td>
+                                            #@item.NotificationId
+                                        </td>
+
+                                        <td>
                                             #@item.RequestId
                                         </td>
 
-
                                         <td>
-                                            @(item.Device?.DeviceName ?? "Unknown Device")
+                                            @item.NotificationDescription
                                         </td>
 
-
                                         <td>
-                                            @item.RequestDescription
+                                            @item.NotificationDate.ToString("dd/MM/yyyy")
                                         </td>
 
-
                                         <td>
 
-                                            <span class="status">
-                                                @item.RequestStatus
-                                            </span>
-
-                                        </td>
-
-
-                                        <td>
-                                            @item.RequestDate.ToString("dd/MM/yyyy")
-                                        </td>
-
-
-                                        <td>
-
-                                            @if (item.RequestStatus != null &&
-                                                 item.RequestStatus.ToLower() == "pending")
+                                            @if (item.IsRead)
                                             {
-                                                <div class="actions">
-
-                                                    <!-- APPROVE -->
-
-                                                    <form asp-controller="MaintenanceRequests"
-                                                          asp-action="Approve"
-                                                          method="post">
-
-                                                        @Html.AntiForgeryToken()
-
-                                                        <input type="hidden"
-                                                               name="requestid"
-                                                               value="@item.RequestId" />
-
-                                                        <button type="submit"
-                                                                class="approve-btn">
-                                                            Approve
-                                                        </button>
-
-                                                    </form>
-
-
-                                                    <!-- REJECT -->
-
-                                                    <form asp-controller="MaintenanceRequests"
-                                                          asp-action="Reject"
-                                                          method="post">
-
-                                                        @Html.AntiForgeryToken()
-
-                                                        <input type="hidden"
-                                                               name="requestid"
-                                                               value="@item.RequestId" />
-
-                                                        <button type="submit"
-                                                                class="reject-btn">
-                                                            Reject
-                                                        </button>
-
-                                                    </form>
-
-                                                </div>
+                                                <span class="read-status read">
+                                                    Read
+                                                </span>
                                             }
                                             else
                                             {
-                                                <span class="processed-text">
-                                                    Processed
+                                                <span class="read-status unread">
+                                                    Unread
                                                 </span>
                                             }
 
@@ -282,15 +214,13 @@
                     <div class="empty-state">
 
                         <div class="empty-icon">
-                            🛠
+                            🔔
                         </div>
 
-                        <h3>
-                            No maintenance requests yet
-                        </h3>
+                        <h3>No notifications yet</h3>
 
                         <p>
-                            New maintenance requests will appear here.
+                            Your system notifications will appear here automatically.
                         </p>
 
                     </div>
