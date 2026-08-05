@@ -1,0 +1,64 @@
+@model DeviceMaintenanceSystem.Models.MaintenanceLog
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>MaintenanceLog</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="LogId" />
+            <div class="form-group">
+                <label asp-for="RequestId" class="control-label"></label>
+                <input asp-for="RequestId" class="form-control" />
+                <span asp-validation-for="RequestId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RepairDetails" class="control-label"></label>
+                <input asp-for="RepairDetails" class="form-control" />
+                <span asp-validation-for="RepairDetails" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RepairStartDate" class="control-label"></label>
+                <input asp-for="RepairStartDate" class="form-control" />
+                <span asp-validation-for="RepairStartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RepairEndDate" class="control-label"></label>
+                <input asp-for="RepairEndDate" class="form-control" />
+                <span asp-validation-for="RepairEndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeviceStatusAfterRepair" class="control-label"></label>
+                <input asp-for="DeviceStatusAfterRepair" class="form-control" />
+                <span asp-validation-for="DeviceStatusAfterRepair" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintenanceRequest" class="control-label"></label>
+                <input asp-for="MaintenanceRequest" class="form-control" />
+                <span asp-validation-for="MaintenanceRequest" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
