@@ -1462,11 +1462,9 @@ body {
             gap: 20px;
         }
 
-        .create-page .page-header h1 {
-            font-size: 34px;
-        }
+    .system-heading h1 {
+        font-size: 30px;
+    }
+   ggg
+  
 }
-
-/* =========================================================
-   MAINTENANCE REQUESTS CREATE - END
-   ========================================================= */
