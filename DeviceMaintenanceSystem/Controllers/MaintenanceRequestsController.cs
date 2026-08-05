@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DeviceMaintenanceSystem.Models;
 
@@ -14,22 +15,34 @@ public class MaintenanceRequestsController : Controller
 
     // =========================================
     // INDEX
-    // عرض جميع طلبات الصيانة
+    // عرض جميع طلبات الصيانة مع بيانات الجهاز
     // =========================================
     public async Task<IActionResult> Index()
     {
-        return View(
-            await _context.MaintenanceRequests.ToListAsync()
-        );
+        var maintenanceRequests =
+            await _context.MaintenanceRequests
+                .Include(r => r.Device)
+                .ToListAsync();
+
+        return View(maintenanceRequests);
     }
 
 
     // =========================================
     // CREATE - GET
     // فتح صفحة إنشاء طلب جديد
+    // وإرسال أسماء الأجهزة للصفحة
     // =========================================
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
+        ViewBag.Devices = new SelectList(
+            await _context.Devices
+                .OrderBy(d => d.DeviceName)
+                .ToListAsync(),
+            "DeviceId",
+            "DeviceName"
+        );
+
         return View();
     }
 
@@ -37,14 +50,24 @@ public class MaintenanceRequestsController : Controller
     // =========================================
     // CREATE - POST
     // إنشاء طلب صيانة جديد
+    // المستخدم يتم تحديده تلقائياً
     // =========================================
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("UserId,DeviceId,RequestDescription")]
+        [Bind("DeviceId,RequestDescription")]
         MaintenanceRequest maintenanceRequest)
     {
+        // -----------------------------------------
+        // المستخدم الحالي يتم تحديده تلقائياً
+        // -----------------------------------------
+        maintenanceRequest.UserId =
+            User.Identity?.Name ?? string.Empty;
+
+
+        // -----------------------------------------
         // التأكد أن الجهاز موجود
+        // -----------------------------------------
         bool deviceExists =
             await _context.Devices.AnyAsync(
                 d => d.DeviceId == maintenanceRequest.DeviceId
@@ -54,21 +77,32 @@ public class MaintenanceRequestsController : Controller
         {
             ModelState.AddModelError(
                 "DeviceId",
-                "The entered Device ID does not exist."
+                "Please select a valid device."
             );
         }
 
+
+        // -----------------------------------------
         // قيم يتم إنشاؤها تلقائياً
+        // -----------------------------------------
         maintenanceRequest.RequestDate = DateTime.Now;
         maintenanceRequest.RequestStatus = "Pending";
 
+
+        // -----------------------------------------
+        // إزالة الحقول التي يتم تعبئتها من النظام
+        // -----------------------------------------
+        ModelState.Remove("UserId");
         ModelState.Remove("RequestDate");
         ModelState.Remove("RequestStatus");
         ModelState.Remove("Device");
         ModelState.Remove("MaintenanceLogs");
         ModelState.Remove("Notifications");
 
+
+        // -----------------------------------------
         // حفظ الطلب
+        // -----------------------------------------
         if (ModelState.IsValid)
         {
             _context.MaintenanceRequests.Add(
@@ -79,6 +113,19 @@ public class MaintenanceRequestsController : Controller
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        // -----------------------------------------
+        // إعادة تحميل قائمة الأجهزة إذا حصل خطأ
+        // -----------------------------------------
+        ViewBag.Devices = new SelectList(
+            await _context.Devices
+                .OrderBy(d => d.DeviceName)
+                .ToListAsync(),
+            "DeviceId",
+            "DeviceName",
+            maintenanceRequest.DeviceId
+        );
 
         return View(maintenanceRequest);
     }
@@ -120,12 +167,15 @@ public class MaintenanceRequestsController : Controller
         var notification = new Notification
         {
             UserId = maintenanceRequest.UserId,
-            RequestId = maintenanceRequest.RequestId,
+
+            RequestId =
+                maintenanceRequest.RequestId,
 
             NotificationDescription =
                 "Your maintenance request has been approved.",
 
             NotificationDate = DateTime.Now,
+
             IsRead = false
         };
 
@@ -173,12 +223,15 @@ public class MaintenanceRequestsController : Controller
         var notification = new Notification
         {
             UserId = maintenanceRequest.UserId,
-            RequestId = maintenanceRequest.RequestId,
+
+            RequestId =
+                maintenanceRequest.RequestId,
 
             NotificationDescription =
                 "Your maintenance request has been rejected.",
 
             NotificationDate = DateTime.Now,
+
             IsRead = false
         };
 
