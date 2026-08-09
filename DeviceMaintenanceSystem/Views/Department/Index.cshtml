@@ -1,47 +1,61 @@
 @model IEnumerable<DeviceMaintenanceSystem.Models.Department>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Departments";
 }
 
-<h1>Index</h1>
+<div class="page-content">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartmentName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HeadUserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Devices)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => item.DepartmentName)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.HeadUserId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Devices)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DepartmentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DepartmentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DepartmentId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="nova-card" style="max-width:1100px;margin:auto;">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div class="nova-card-heading">
+                <span>DEVICE MAINTENANCE SYSTEM</span>
+                <h2 style="color:darkcyan">Departments</h2>
+                <p>.Manage all departments</p>
+            </div>
+
+            <a asp-action="Create" class="nova-signin"
+               style="width:190px;height:50px;text-decoration:none;">
+                + New Department
+            </a>
+
+        </div>
+
+        <table class="table table-light table-hover align-middle">
+
+            <thead>
+
+                <tr>
+                    <th>Action</th>
+                    <th>Department</th>
+                    <th>Head User</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Edit"
+                               asp-route-departmentid="@item.DepartmentId"
+                               class="btn btn-warning btn-sm">
+                                Edit
+                            </a>
+                        </td>
+                        <td>@item.DepartmentName</td>
+                        <td>@item.HeadUserName</td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

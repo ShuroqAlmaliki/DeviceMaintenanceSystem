@@ -279,7 +279,7 @@ body {
 .visual-status {
     fill: rgba(48, 182, 255, 0.20);
     stroke: #42b3ff;
-    stroke-width: 1.5;
+    stroke-width: 1.5px;
 }
 
 .visual-check {
@@ -388,7 +388,7 @@ body {
         width: 27px;
         fill: none;
         stroke: white;
-        stroke-width: 1.8;
+        stroke-width: 1.8px;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
@@ -470,7 +470,7 @@ body {
         margin-left: 16px;
         fill: none;
         stroke: #7195c9;
-        stroke-width: 1.7;
+        stroke-width: 1.7px;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
@@ -506,7 +506,7 @@ body {
         width: 19px;
         fill: none;
         stroke: #6d8dbb;
-        stroke-width: 1.7;
+        stroke-width: 1.7px;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
@@ -1465,8 +1465,6 @@ body {
     .system-heading h1 {
         font-size: 30px;
     }
-   ggg
-  
 }
 /* =========================================
    NOTIFICATIONS PAGE
@@ -1759,3 +1757,580 @@ body {
 /* =========================================
    END NOTIFICATIONS PAGE
    ========================================= */
+/* =========================================================
+   SHARED SYSTEM LAYOUT - START
+   ========================================================= */
+
+.app-layout,
+.app-layout * {
+    box-sizing: border-box;
+}
+
+.app-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: #f3f6fb;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.app-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 260px;
+    padding: 30px 22px;
+    background: linear-gradient( 180deg, #087af2 0%, #0864d7 100% );
+    color: white;
+    z-index: 1000;
+    box-shadow: -8px 0 30px rgba(0, 37, 96, 0.12);
+}
+
+
+/* =========================================================
+   SIDEBAR BRAND
+   ========================================================= */
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 28px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    border-radius: 17px;
+    background: rgba(255, 255, 255, 0.10);
+    color: white;
+    font-size: 24px;
+    font-weight: 800;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-brand-text h2 {
+    margin: 0 0 5px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.sidebar-brand-text p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.70);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+    .sidebar-link:hover {
+        transform: translateX(-2px);
+        border-color: rgba(255, 255, 255, 0.10);
+        background: rgba(255, 255, 255, 0.13);
+        color: white;
+    }
+
+.sidebar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    color: white;
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   MAIN AREA
+   ========================================================= */
+
+.app-main {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 260px);
+    min-height: 100vh;
+    margin-right: 260px;
+    background: #f3f6fb;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 82px;
+    padding: 0 32px;
+    border-bottom: 1px solid rgba(111, 169, 237, 0.16);
+    background: linear-gradient( 90deg, rgba(4, 24, 63, 0.98) 0%, rgba(7, 48, 108, 0.97) 100% );
+    box-shadow: 0 8px 28px rgba(0, 21, 58, 0.18);
+    backdrop-filter: blur(18px);
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   USER CARD
+   ========================================================= */
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 7px 14px 7px 8px;
+    border: 1px solid rgba(126, 184, 255, 0.18);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.header-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: linear-gradient( 145deg, #1688ff 0%, #63b9ff 100% );
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 8px 18px rgba(0, 119, 255, 0.24);
+}
+
+.header-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.header-user-label {
+    margin-bottom: 2px;
+    color: #7696c4;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.header-user-info strong {
+    max-width: 220px;
+    overflow: hidden;
+    color: #e8f2ff;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   NOTIFICATION BUTTON
+   ========================================================= */
+
+.notification-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(111, 176, 255, 0.20);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.055);
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .notification-button:hover {
+        transform: translateY(-2px);
+        border-color: rgba(97, 183, 255, 0.50);
+        background: rgba(35, 132, 255, 0.14);
+        box-shadow: 0 10px 24px rgba(0, 101, 230, 0.18);
+    }
+
+.notification-icon {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: #74c2ff;
+    stroke-width: 1.8px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   SIGN OUT
+   ========================================================= */
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 46px;
+    padding: 0 16px;
+    border: 1px solid rgba(111, 176, 255, 0.20);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.055);
+    color: #d9eaff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .logout-button:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.10);
+        color: white;
+        box-shadow: 0 10px 24px rgba(0, 21, 58, 0.16);
+    }
+
+.logout-icon {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: #78bdff;
+    stroke-width: 1.8px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.app-content {
+    flex: 1;
+    width: 100%;
+    padding: 0;
+    background: #f3f6fb;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.app-footer {
+    width: 100%;
+    padding: 16px 25px;
+    border-top: 1px solid rgba(220, 228, 239, 0.85);
+    background: #ffffff;
+    color: #59667a;
+    font-size: 11px;
+    text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .app-sidebar {
+        width: 220px;
+    }
+
+    .app-main {
+        width: calc(100% - 220px);
+        margin-right: 220px;
+    }
+
+    .sidebar-brand-text h2 {
+        font-size: 14px;
+    }
+
+    .sidebar-brand-text p {
+        font-size: 9px;
+    }
+
+    .app-header {
+        padding: 0 20px;
+    }
+
+    .header-user-info strong {
+        max-width: 150px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .app-sidebar {
+        position: static;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .app-main {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .sidebar-brand {
+        margin-bottom: 18px;
+        padding-bottom: 18px;
+    }
+
+    .sidebar-navigation {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar-link {
+        width: auto;
+    }
+
+    .app-header {
+        min-height: 72px;
+        padding: 0 15px;
+    }
+
+    .header-user-info {
+        display: none;
+    }
+
+    .header-user {
+        padding: 6px;
+    }
+
+    .header-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .logout-button {
+        width: 46px;
+        padding: 0;
+    }
+
+        .logout-button span {
+            display: none;
+        }
+}
+
+/* =========================================================
+   SHARED SYSTEM LAYOUT - END
+   ========================================================= */
+/* =========================================================
+   REQUESTER HOME PAGE - START
+   ========================================================= */
+
+.requester-home-page {
+    min-height: calc(100vh - 82px);
+    padding: 55px 5%;
+    background: radial-gradient( circle at 85% 15%, rgba(30, 132, 255, 0.28), transparent 32% ), linear-gradient( 135deg, #071f51 0%, #0b3d83 55%, #0b79ed 100% );
+}
+
+.requester-home-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/* HEADER */
+
+.requester-home-header {
+    margin-bottom: 38px;
+}
+
+.requester-home-label {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 8px 18px;
+    border: 1px solid rgba(92, 175, 255, 0.55);
+    border-radius: 30px;
+    background: rgba(24, 125, 255, 0.10);
+    color: #6fc0ff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.requester-home-header h1 {
+    margin: 0 0 12px;
+    color: white;
+    font-size: 46px;
+    font-weight: 700;
+}
+
+.requester-home-header p {
+    max-width: 680px;
+    margin: 0;
+    color: #b5cbea;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* CARDS */
+
+.requester-home-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.requester-home-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    padding: 28px;
+    border: 1px solid rgba(120, 177, 238, 0.22);
+    border-radius: 22px;
+    background: rgba(5, 33, 79, 0.88);
+    box-shadow: 0 20px 45px rgba(0, 18, 52, 0.18);
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .requester-home-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(95, 184, 255, 0.48);
+        box-shadow: 0 24px 55px rgba(0, 18, 52, 0.28);
+    }
+
+.requester-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 24px;
+    border-radius: 16px;
+    background: linear-gradient( 145deg, #1488ff, #61b8ff );
+    box-shadow: 0 10px 24px rgba(0, 123, 255, 0.24);
+}
+
+    .requester-card-icon svg {
+        width: 25px;
+        height: 25px;
+        fill: none;
+        stroke: white;
+        stroke-width: 1.8px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.requester-card-content h2 {
+    margin: 0 0 10px;
+    color: white;
+    font-size: 21px;
+}
+
+.requester-card-content p {
+    min-height: 66px;
+    margin: 0 0 20px;
+    color: #9eb7db;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.requester-card-link {
+    color: #67b9ff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+    .requester-home-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .requester-home-page {
+        padding: 35px 20px;
+    }
+
+    .requester-home-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .requester-home-header h1 {
+        font-size: 34px;
+    }
+}
+
+/* =========================================================
+   REQUESTER HOME PAGE - END
+   ========================================================= */

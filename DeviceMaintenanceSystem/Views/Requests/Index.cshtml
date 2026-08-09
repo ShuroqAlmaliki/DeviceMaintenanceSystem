@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Requester Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="requester-home-page">
+
+    <div class="requester-home-container">
+
+        <div class="requester-home-header">
+
+            <span class="requester-home-label">
+                REQUESTER PORTAL
+            </span>
+
+            <h1>Requester Dashboard</h1>
+
+            <p>
+                Submit maintenance requests and track their progress from one place.
+            </p>
+
+        </div>
+
+
+        <div class="requester-home-grid">
+
+            <!-- NEW REQUEST -->
+
+            <a asp-controller="MaintenanceRequests"
+               asp-action="Create"
+               class="requester-home-card">
+
+                <div class="requester-card-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+
+                </div>
+
+                <div class="requester-card-content">
+
+                    <h2>New Request</h2>
+
+                    <p>
+                        Submit a new maintenance request for a university device.
+                    </p>
+
+                    <span class="requester-card-link">
+                        Create Request →
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- MY REQUESTS -->
+
+            <a asp-controller="MaintenanceRequests"
+               asp-action="Index"
+               class="requester-home-card">
+
+                <div class="requester-card-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 3h12v18H6z" />
+                        <path d="M9 8h6M9 12h6M9 16h4" />
+                    </svg>
+
+                </div>
+
+                <div class="requester-card-content">
+
+                    <h2>My Requests</h2>
+
+                    <p>
+                        View your submitted requests and follow their current status.
+                    </p>
+
+                    <span class="requester-card-link">
+                        View Requests →
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <a asp-controller="Notifications"
+               asp-action="Index"
+               class="requester-home-card">
+
+                <div class="requester-card-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                        <path d="M10 21h4" />
+                    </svg>
+
+                </div>
+
+                <div class="requester-card-content">
+
+                    <h2>Notifications</h2>
+
+                    <p>
+                        Check updates related to your maintenance requests.
+                    </p>
+
+                    <span class="requester-card-link">
+                        View Notifications →
+                    </span>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

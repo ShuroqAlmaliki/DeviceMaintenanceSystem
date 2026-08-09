@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DeviceMaintenanceSystem.Models;
@@ -13,7 +12,7 @@ public class DepartmentsController : Controller
     }
 
     // GET: DEPARTMENTS
-    public async Task<IActionResult> Index()    
+    public async Task<IActionResult> Index()
     {
         return View(await _context.Departments.ToListAsync());
     }
@@ -43,19 +42,20 @@ public class DepartmentsController : Controller
     }
 
     // POST: DEPARTMENTS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("DepartmentId,DepartmentName,HeadUserId,Devices")] Department department)
+    public async Task<IActionResult> Create([Bind("DepartmentName,HeadUserID,HeadUserName")] Department department)
     {
-        if (ModelState.IsValid)
+        try
         {
             _context.Add(department);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(department);
+        catch
+        {
+            return View(department);
+        }
     }
 
     // GET: DEPARTMENTS/Edit/5
@@ -75,38 +75,36 @@ public class DepartmentsController : Controller
     }
 
     // POST: DEPARTMENTS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? departmentid, [Bind("DepartmentId,DepartmentName,HeadUserId,Devices")] Department department)
+    public async Task<IActionResult> Edit(int departmentid, [Bind("DepartmentId,DepartmentName,HeadUserID,HeadUserName")] Department department)
     {
         if (departmentid != department.DepartmentId)
         {
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        try
         {
-            try
-            {
-                _context.Update(department);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DepartmentExists(department.DepartmentId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Update(department);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(department);
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!DepartmentExists(department.DepartmentId))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        catch
+        {
+            return View(department);
+        }
     }
 
     // GET: DEPARTMENTS/Delete/5

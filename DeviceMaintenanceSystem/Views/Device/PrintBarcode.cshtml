@@ -1,0 +1,52 @@
+﻿@model DeviceMaintenanceSystem.Models.Device
+
+@{
+    ViewData["Title"] = "طباعة الباركود";
+}
+
+
+<div class="container text-center mt-5">
+
+    <h2>طباعة باركود الجهاز</h2>
+
+    <hr />
+
+    <h4>
+        @Model.DeviceName
+    </h4>
+
+
+    <p>
+        رقم الجهاز:
+        <strong>@Model.DeviceId</strong>
+    </p>
+
+
+    <div class="border rounded p-4 mt-4">
+
+        <h5>الباركود</h5>
+
+        <img src="@ViewBag.BarcodeImage"
+             alt="Barcode"
+             style="width:350px;height:120px;" />
+
+
+        <p class="mt-3">
+            @Model.BarcodeValue
+        </p>
+
+    </div>
+
+
+    <button onclick="window.print()"
+            class="btn btn-primary mt-4">
+        🖨️ طباعة
+    </button>
+
+
+    <a asp-action="Index"
+       class="btn btn-secondary mt-4">
+        العودة
+    </a>
+
+</div>

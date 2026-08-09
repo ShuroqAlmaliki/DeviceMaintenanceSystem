@@ -10,7 +10,8 @@ namespace DeviceMaintenanceSystem.Models
         [Required]
         public string DepartmentName { get; set; } = string.Empty;
 
-        public int? HeadUserId { get; set; }
+        public int? HeadUserID { get; set; }
+        public string? HeadUserName { get; set; }
 
         // Navigation Properties
         public ICollection<Device> Devices { get; set; }

@@ -1,237 +1,305 @@
-@model IEnumerable<DeviceMaintenanceSystem.Models.Notification>
+@model IEnumerable<DeviceMaintenanceSystem.Models.MaintenanceRequest>
 
 @{
-    ViewData["Title"] = "Notifications";
-    Layout = null;
+    ViewData["Title"] = "Maintenance Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var totalNotifications = Model?.Count() ?? 0;
-    var unreadNotifications = Model?.Count(x => !x.IsRead) ?? 0;
-    var readNotifications = Model?.Count(x => x.IsRead) ?? 0;
+    var totalRequests = Model?.Count() ?? 0;
+
+    var pendingRequests = Model?.Count(x =>
+        x.RequestStatus != null &&
+        x.RequestStatus.ToLower() == "pending") ?? 0;
+
+    var completedRequests = Model?.Count(x =>
+        x.RequestStatus != null &&
+        x.RequestStatus.ToLower() == "completed") ?? 0;
 }
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<div class="requests-page">
 
-    <meta charset="utf-8" />
+    <div class="requests-container">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
 
-    <title>Notifications</title>
+        <!-- PAGE HEADER -->
 
-    <link rel="stylesheet"
-          href="~/css/site.css"
-          asp-append-version="true" />
+        <div class="page-header">
 
-</head>
+            <div class="page-title">
 
-<body>
-
-    <div class="notifications-page">
-
-        <div class="notifications-container">
-
-            <!-- TOP BAR -->
-
-            <div class="top-bar">
-
-                <div class="university">
-
-                    <div class="tu-logo">
-                        TU
-                    </div>
-
-                    <div>
-                        <h3>Taif University</h3>
-                        <p>Technical Support Department</p>
-                    </div>
-
+                <div class="small-title">
+                    MAINTENANCE MANAGEMENT
                 </div>
 
-                <a asp-controller="MaintenanceRequests"
-                   asp-action="Index"
-                   class="back-button">
-                    Back to Requests
-                </a>
+                <h1>
+                    Maintenance Requests
+                </h1>
+
+                <p>
+                    View and manage all submitted maintenance requests.
+                </p>
 
             </div>
 
 
-            <!-- PAGE HEADER -->
+            <a asp-controller="MaintenanceRequests"
+               asp-action="Create"
+               class="new-request">
 
-            <div class="page-header">
+                New Request
+                <span>＋</span>
 
-                <div class="page-title">
+            </a>
 
-                    <div class="small-title">
-                        SYSTEM NOTIFICATIONS
-                    </div>
+        </div>
 
-                    <h1>Notifications</h1>
 
-                    <p>
-                        View your system notifications.
-                    </p>
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📋
+                </div>
+
+                <div class="stat-info">
+
+                    <p>Total Requests</p>
+
+                    <h2>
+                        @totalRequests
+                    </h2>
 
                 </div>
 
             </div>
 
 
-            <!-- STATISTICS -->
+            <div class="stat-card">
 
-            <div class="stats">
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        🔔
-                    </div>
-
-                    <div class="stat-info">
-                        <p>Total Notifications</p>
-                        <h2>@totalNotifications</h2>
-                    </div>
-
+                <div class="stat-icon">
+                    ⏳
                 </div>
 
+                <div class="stat-info">
 
-                <div class="stat-card">
+                    <p>Pending</p>
 
-                    <div class="stat-icon">
-                        ●
-                    </div>
-
-                    <div class="stat-info">
-                        <p>Unread</p>
-                        <h2>@unreadNotifications</h2>
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        ✓
-                    </div>
-
-                    <div class="stat-info">
-                        <p>Read</p>
-                        <h2>@readNotifications</h2>
-                    </div>
+                    <h2>
+                        @pendingRequests
+                    </h2>
 
                 </div>
 
             </div>
 
 
-            <!-- NOTIFICATIONS LIST -->
+            <div class="stat-card">
 
-            <div class="notifications-card">
-
-                <div class="card-header">
-
-                    <h2>Notifications List</h2>
-
-                    <p>
-                        Your notifications registered in the system.
-                    </p>
-
+                <div class="stat-icon">
+                    ✓
                 </div>
 
+                <div class="stat-info">
 
-                @if (Model != null && Model.Any())
-                {
-                    <div class="table-wrapper">
+                    <p>Completed</p>
 
-                        <table class="notifications-table">
+                    <h2>
+                        @completedRequests
+                    </h2>
 
-                            <thead>
-
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Request ID</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            #@item.NotificationId
-                                        </td>
-
-                                        <td>
-                                            #@item.RequestId
-                                        </td>
-
-                                        <td>
-                                            @item.NotificationDescription
-                                        </td>
-
-                                        <td>
-                                            @item.NotificationDate.ToString("dd/MM/yyyy")
-                                        </td>
-
-                                        <td>
-
-                                            @if (item.IsRead)
-                                            {
-                                                <span class="read-status read">
-                                                    Read
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                <span class="read-status unread">
-                                                    Unread
-                                                </span>
-                                            }
-
-                                        </td>
-
-                                    </tr>
-                                }
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-                }
-                else
-                {
-                    <div class="empty-state">
-
-                        <div class="empty-icon">
-                            🔔
-                        </div>
-
-                        <h3>No notifications yet</h3>
-
-                        <p>
-                            Your system notifications will appear here automatically.
-                        </p>
-
-                    </div>
-                }
+                </div>
 
             </div>
 
         </div>
 
+
+        <!-- REQUESTS LIST -->
+
+        <div class="requests-card">
+
+            <div class="card-header">
+
+                <h2>
+                    Requests List
+                </h2>
+
+                <p>
+                    All maintenance requests registered in the system.
+                </p>
+
+            </div>
+
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-wrapper">
+
+                    <table class="requests-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Request ID
+                                </th>
+
+                                <th>
+                                    Device Name
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        #@item.RequestId
+                                    </td>
+
+
+                                    <td>
+                                        @(item.Device?.DeviceName ?? "Unknown Device")
+                                    </td>
+
+
+                                    <td>
+                                        @item.RequestDescription
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="status">
+                                            @item.RequestStatus
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        @item.RequestDate.ToString("dd/MM/yyyy")
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (item.RequestStatus != null &&
+                                             item.RequestStatus.ToLower() == "pending")
+                                        {
+                                            <div class="actions">
+
+
+                                                <!-- APPROVE -->
+
+                                                <form asp-controller="MaintenanceRequests"
+                                                      asp-action="Approve"
+                                                      method="post">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <input type="hidden"
+                                                           name="requestid"
+                                                           value="@item.RequestId" />
+
+                                                    <button type="submit"
+                                                            class="approve-btn">
+
+                                                        Approve
+
+                                                    </button>
+
+                                                </form>
+
+
+                                                <!-- REJECT -->
+
+                                                <form asp-controller="MaintenanceRequests"
+                                                      asp-action="Reject"
+                                                      method="post">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <input type="hidden"
+                                                           name="requestid"
+                                                           value="@item.RequestId" />
+
+                                                    <button type="submit"
+                                                            class="reject-btn">
+
+                                                        Reject
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="processed-text">
+                                                Processed
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🛠
+                    </div>
+
+                    <h3>
+                        No maintenance requests yet
+                    </h3>
+
+                    <p>
+                        New maintenance requests will appear here.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
     </div>
 
-</body>
-
-</html>
+</div>

@@ -1,76 +1,287 @@
-﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - نظام إدارة صيانة الأجهزة</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DeviceMaintenanceSystem.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Device Maintenance System</title>
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
 </head>
 
 <body>
-    <div class="d-flex">
 
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h4>نظام الصيانة</h4>
-                <p>إدارة صيانة الأجهزة</p>
+    <div class="app-layout">
+
+        <!-- =========================================
+             SIDEBAR
+             ========================================= -->
+
+        <aside class="app-sidebar">
+
+            <!-- BRAND -->
+
+            <div class="sidebar-brand">
+
+                <div class="sidebar-logo">
+                    TU
+                </div>
+
+                <div class="sidebar-brand-text">
+                    <h2>Taif University</h2>
+                    <p>Technical Support Department</p>
+                </div>
+
             </div>
 
-            <nav class="sidebar-menu">
-                <a asp-controller="Home" asp-action="Index">
-                    الرئيسية
-                </a>
 
-                <a asp-controller="Requests" asp-action="Create">
-                    طلب جديد
-                </a>
+            <!-- NAVIGATION -->
 
-                <a asp-controller="Requests" asp-action="MyRequests">
-                    طلباتي
-                </a>
+            <nav class="sidebar-navigation">
 
-                <a asp-controller="Notifications" asp-action="Index">
-                    الإشعارات
-                </a>
+                @if (User.IsInRole("Requester"))
+                {
+                    <a asp-controller="Requests"
+                       asp-action="Index"
+                       class="sidebar-link">
 
-                <a asp-controller="Devices" asp-action="Index">
-                    الأجهزة
-                </a>
+                        <span class="sidebar-icon">⌂</span>
+                        <span>Home</span>
+
+                    </a>
+
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="Create"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">＋</span>
+                        <span>New Request</span>
+
+                    </a>
+
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">▣</span>
+                        <span>My Requests</span>
+
+                    </a>
+                }
+
+
+                @if (User.IsInRole("DepartmentHead"))
+                {
+                    <a asp-controller="Approvals"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">⌂</span>
+                        <span>Home</span>
+
+                    </a>
+
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">▣</span>
+                        <span>Maintenance Requests</span>
+
+                    </a>
+                }
+
+
+                @if (User.IsInRole("MaintenanceStaff"))
+                {
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">⌂</span>
+                        <span>Home</span>
+
+                    </a>
+
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">▣</span>
+                        <span>Maintenance Requests</span>
+
+                    </a>
+
+                    <a asp-controller="MaintenanceLogs"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">☷</span>
+                        <span>Maintenance Log</span>
+
+                    </a>
+                }
+
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">⌂</span>
+                        <span>Home</span>
+
+                    </a>
+
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">▣</span>
+                        <span>Maintenance Requests</span>
+
+                    </a>
+                }
+
             </nav>
+
         </aside>
 
-        <div class="main-content">
-            <header class="top-header">
-                <div>
-                    <h5 class="mb-0">@ViewData["Title"]</h5>
+
+        <!-- =========================================
+             MAIN AREA
+             ========================================= -->
+
+        <div class="app-main">
+
+            <!-- =========================================
+                 HEADER
+                 ========================================= -->
+
+            <header class="app-header">
+
+                <div class="header-actions">
+
+                    <!-- USER -->
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="header-user">
+
+                            <div class="header-avatar">
+                                @((User.Identity.Name ?? "U").Substring(0, 1).ToUpper())
+                            </div>
+
+                            <div class="header-user-info">
+
+                                <span class="header-user-label">
+                                    Signed in as
+                                </span>
+
+                                <strong>
+                                    @User.Identity.Name
+                                </strong>
+
+                            </div>
+
+                        </div>
+                    }
+
+
+                    <!-- NOTIFICATIONS -->
+
+                    <a asp-controller="Notifications"
+                       asp-action="Index"
+                       class="notification-button"
+                       title="Notifications">
+
+                        <svg viewBox="0 0 24 24"
+                             class="notification-icon">
+
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+
+                            <path d="M10 21h4" />
+
+                        </svg>
+
+                    </a>
+
+
+                    <!-- SIGN OUT -->
+
+                    <form asp-controller="Account"
+                          asp-action="Logout"
+                          method="post"
+                          class="logout-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="logout-button">
+
+                            <svg viewBox="0 0 24 24"
+                                 class="logout-icon">
+
+                                <path d="M10 17l5-5-5-5" />
+
+                                <path d="M15 12H3" />
+
+                                <path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5" />
+
+                            </svg>
+
+                            <span>
+                                Sign Out
+                            </span>
+
+                        </button>
+
+                    </form>
+
                 </div>
 
-                <div class="user-area">
-                    <span>مرحبًا</span>
-                </div>
             </header>
 
-            <main class="page-content">
+
+            <!-- =========================================
+                 PAGE CONTENT
+                 ========================================= -->
+
+            <main class="app-content">
+
                 @RenderBody()
+
             </main>
 
-            <footer class="footer">
-                <p class="mb-0">
-                    © 2026 نظام إدارة صيانة الأجهزة
-                </p>
+
+            <!-- =========================================
+                 FOOTER
+                 ========================================= -->
+
+            <footer class="app-footer">
+
+                Device Maintenance System | Taif University © 2026
+
             </footer>
+
         </div>
 
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+    )
+
 </body>
+
 </html>
