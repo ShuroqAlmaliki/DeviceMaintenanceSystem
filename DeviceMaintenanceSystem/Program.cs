@@ -88,6 +88,10 @@ using (
     };
 
 
+    // =====================================
+    // CREATE ROLES
+    // =====================================
+
     foreach (var role in roles)
     {
         if (
@@ -102,57 +106,45 @@ using (
     }
 
 
+    // =====================================
+    // TEST USERS
+    // =====================================
+
     var testUsers = new[]
     {
         new
         {
-            Email =
-                "requester@test.com",
-
-            Password =
-                "Test@1234",
-
-            Role =
-                "Requester"
+            Email = "requester@test.com",
+            Password = "Test@1234",
+            Role = "Requester"
         },
 
         new
         {
-            Email =
-                "head@test.com",
-
-            Password =
-                "Test@1234",
-
-            Role =
-                "DepartmentHead"
+            Email = "head@test.com",
+            Password = "Test@1234",
+            Role = "DepartmentHead"
         },
 
         new
         {
-            Email =
-                "tech@test.com",
-
-            Password =
-                "Test@1234",
-
-            Role =
-                "MaintenanceStaff"
+            Email = "tech@test.com",
+            Password = "Test@1234",
+            Role = "MaintenanceStaff"
         },
 
         new
         {
-            Email =
-                "admin@test.com",
-
-            Password =
-                "Test@1234",
-
-            Role =
-                "Admin"
+            Email = "admin@test.com",
+            Password = "Test@1234",
+            Role = "Admin"
         }
     };
 
+
+    // =====================================
+    // CREATE USERS AND FIX THEIR ROLES
+    // =====================================
 
     foreach (var u in testUsers)
     {
@@ -162,16 +154,16 @@ using (
                     u.Email
                 );
 
+
+        // إذا المستخدم غير موجود يتم إنشاؤه
         if (user == null)
         {
             user =
                 new IdentityUser
                 {
-                    UserName =
-                        u.Email,
-
-                    Email =
-                        u.Email
+                    UserName = u.Email,
+                    Email = u.Email,
+                    EmailConfirmed = true
                 };
 
             var result =
@@ -181,14 +173,56 @@ using (
                         u.Password
                     );
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
+            {
+                continue;
+            }
+        }
+
+
+        // =================================
+        // GET CURRENT ROLES
+        // =================================
+
+        var currentRoles =
+            await userManager
+                .GetRolesAsync(user);
+
+
+        // =================================
+        // REMOVE WRONG ROLES
+        // =================================
+
+        foreach (var currentRole in currentRoles)
+        {
+            if (currentRole != u.Role)
             {
                 await userManager
-                    .AddToRoleAsync(
+                    .RemoveFromRoleAsync(
                         user,
-                        u.Role
+                        currentRole
                     );
             }
+        }
+
+
+        // =================================
+        // ADD CORRECT ROLE
+        // =================================
+
+        if (
+            !await userManager
+                .IsInRoleAsync(
+                    user,
+                    u.Role
+                )
+        )
+        {
+            await userManager
+                .AddToRoleAsync(
+                    user,
+                    u.Role
+                );
         }
     }
 }

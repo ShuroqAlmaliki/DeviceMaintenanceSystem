@@ -1,0 +1,282 @@
+@model IEnumerable<DeviceMaintenanceSystem.Models.Department>
+
+@{
+    ViewData["Title"] = "Departments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var totalDepartments = Model?.Count() ?? 0;
+
+    var assignedHeads = Model?
+        .Count(x => !string.IsNullOrWhiteSpace(x.HeadUserName)) ?? 0;
+
+    var unassignedHeads = totalDepartments - assignedHeads;
+}
+
+<div class="departments-page">
+
+    <div class="departments-container">
+
+        <!-- PAGE HEADER -->
+
+        <div class="departments-header">
+
+            <div class="departments-title-area">
+
+                <div class="departments-label">
+                    DEPARTMENT MANAGEMENT
+                </div>
+
+                <h1>Departments</h1>
+
+                <p>
+                    Manage university departments and assigned department heads.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Create"
+               class="departments-add-button">
+
+                <span>+</span>
+                Add New Department
+
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="departments-stats">
+
+            <div class="department-stat-card">
+
+                <div class="department-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 21V5h10v16" />
+                        <path d="M14 9h6v12" />
+                        <path d="M8 9h2" />
+                        <path d="M8 13h2" />
+                        <path d="M8 17h2" />
+                    </svg>
+
+                </div>
+
+                <div>
+                    <span>Total Departments</span>
+                    <strong>@totalDepartments</strong>
+                </div>
+
+            </div>
+
+
+            <div class="department-stat-card">
+
+                <div class="department-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12"
+                                cy="8"
+                                r="4" />
+
+                        <path d="M5 21c0-4 3-7 7-7s7 3 7 7" />
+                    </svg>
+
+                </div>
+
+                <div>
+                    <span>Assigned Heads</span>
+                    <strong>@assignedHeads</strong>
+                </div>
+
+            </div>
+
+
+            <div class="department-stat-card">
+
+                <div class="department-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12"
+                                cy="12"
+                                r="9" />
+
+                        <path d="M8 12h8" />
+                    </svg>
+
+                </div>
+
+                <div>
+                    <span>Unassigned</span>
+                    <strong>@unassignedHeads</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="departments-table-card">
+
+            <div class="departments-table-header">
+
+                <div>
+
+                    <h2>Departments List</h2>
+
+                    <p>
+                        All departments registered in the system.
+                    </p>
+
+                </div>
+
+
+                <div class="departments-count">
+                    @totalDepartments Department@(totalDepartments == 1 ? "" : "s")
+                </div>
+
+            </div>
+
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="departments-table-wrapper">
+
+                    <table class="departments-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Department ID</th>
+                                <th>Department Name</th>
+                                <th>Head User ID</th>
+                                <th>Department Head</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <span class="department-id">
+                                            #@item.DepartmentId
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="department-name-cell">
+
+                                            <div class="department-mini-icon">
+
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M4 21V5h10v16" />
+                                                    <path d="M14 9h6v12" />
+                                                </svg>
+
+                                            </div>
+
+                                            <strong>
+                                                @item.DepartmentName
+                                            </strong>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @(item.HeadUserID.HasValue
+                                            ? item.HeadUserID.ToString()
+                                            : "Not Assigned")
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.HeadUserName))
+                                        {
+                                            <span class="department-head-assigned">
+                                                @item.HeadUserName
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="department-head-unassigned">
+                                                Not Assigned
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a asp-action="Edit"
+                                           asp-route-departmentid="@item.DepartmentId"
+                                           class="department-edit-button">
+
+                                            Edit
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="departments-empty">
+
+                    <div class="departments-empty-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 21V5h10v16" />
+                            <path d="M14 9h6v12" />
+                        </svg>
+
+                    </div>
+
+                    <h3>No Departments Found</h3>
+
+                    <p>
+                        There are currently no departments registered in the system.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="departments-add-button">
+
+                        Add First Department
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

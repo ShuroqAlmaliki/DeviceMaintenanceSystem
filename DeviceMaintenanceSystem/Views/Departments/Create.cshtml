@@ -1,0 +1,166 @@
+@model DeviceMaintenanceSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Add Department";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="department-form-page">
+
+    <div class="department-form-container">
+
+        <!-- HEADER -->
+
+        <div class="department-form-header">
+
+            <div>
+
+                <div class="departments-label">
+                    DEPARTMENT MANAGEMENT
+                </div>
+
+                <h1>Add New Department</h1>
+
+                <p>
+                    Register a new university department in the system.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Index"
+               class="department-back-button">
+
+                ← Back to Departments
+
+            </a>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <div class="department-form-card">
+
+            <div class="department-form-card-header">
+
+                <h2>Department Information</h2>
+
+                <p>
+                    Enter the department details below.
+                </p>
+
+            </div>
+
+
+            <form asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <div asp-validation-summary="ModelOnly"
+                     class="department-validation-summary">
+                </div>
+
+
+                <div class="department-form-grid">
+
+                    <div class="department-field department-field-full">
+
+                        <label asp-for="DepartmentName">
+                            Department Name
+                        </label>
+
+                        <input asp-for="DepartmentName"
+                               class="department-input"
+                               placeholder="Enter department name" />
+
+                        <span asp-validation-for="DepartmentName"
+                              class="department-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="department-field">
+
+                        <label asp-for="HeadUserID">
+                            Head User ID
+                        </label>
+
+                        <input asp-for="HeadUserID"
+                               class="department-input"
+                               placeholder="Enter head user ID" />
+
+                        <span asp-validation-for="HeadUserID"
+                              class="department-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="department-field">
+
+                        <label asp-for="HeadUserName">
+                            Department Head Name
+                        </label>
+
+                        <input asp-for="HeadUserName"
+                               class="department-input"
+                               placeholder="Enter department head name" />
+
+                        <span asp-validation-for="HeadUserName"
+                              class="department-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="department-form-note">
+
+                    <strong>Note:</strong>
+                    Head user information can be left empty and assigned later.
+
+                </div>
+
+
+                <div class="department-form-actions">
+
+                    <button type="submit"
+                            class="department-primary-button">
+
+                        Create Department
+
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="department-secondary-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial"
+        );
+    }
+
+}

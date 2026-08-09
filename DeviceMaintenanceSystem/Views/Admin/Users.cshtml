@@ -1,0 +1,131 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Users Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var totalUsers = Model?.Count() ?? 0;
+}
+
+<div class="admin-users-page">
+
+    <div class="admin-users-container">
+
+        <div class="admin-users-header">
+
+            <div>
+
+                <div class="admin-dashboard-label">
+                    USER MANAGEMENT
+                </div>
+
+                <h1>Users</h1>
+
+                <p>
+                    View registered system users and their assigned roles.
+                </p>
+
+            </div>
+
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="admin-users-back">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+
+        <div class="admin-users-card">
+
+            <div class="admin-users-card-header">
+
+                <div>
+
+                    <h2>Users List</h2>
+
+                    <p>
+                        All registered users in the system.
+                    </p>
+
+                </div>
+
+
+                <div class="admin-users-count">
+
+                    @totalUsers User@(totalUsers == 1 ? "" : "s")
+
+                </div>
+
+            </div>
+
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="admin-users-table-wrapper">
+
+                    <table class="admin-users-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Email</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @user.Email
+                                    </td>
+
+                                    <td>
+                                        @user.UserName
+                                    </td>
+
+                                    <td>
+
+                                        <span class="admin-user-role">
+                                            @user.Role
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="admin-users-empty">
+
+                    <h3>No Users Found</h3>
+
+                    <p>
+                        No users are currently registered in the system.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,226 @@
+@model DeviceMaintenanceSystem.Models.MaintenanceLog
+
+@{
+    ViewData["Title"] = "Add Maintenance Log";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="log-form-page">
+
+    <div class="log-form-container">
+
+        <!-- HEADER -->
+
+        <div class="log-form-header">
+
+            <div>
+
+                <div class="logs-label">
+                    MAINTENANCE MANAGEMENT
+                </div>
+
+                <h1>Add Maintenance Log</h1>
+
+                <p>
+                    Record repair details for a maintenance request.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Index"
+               class="log-back-button">
+
+                ← Back to Maintenance Log
+
+            </a>
+
+        </div>
+
+
+        <!-- FORM CARD -->
+
+        <div class="log-form-card">
+
+            <div class="log-form-card-header">
+
+                <h2>Maintenance Information</h2>
+
+                <p>
+                    Enter the repair information below.
+                </p>
+
+            </div>
+
+
+            <form asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <div asp-validation-summary="ModelOnly"
+                     class="log-validation-summary">
+                </div>
+
+
+                <div class="log-form-grid">
+
+
+                    <!-- REQUEST -->
+
+                    <div class="log-field log-field-full">
+
+                        <label asp-for="RequestId">
+                            Maintenance Request
+                        </label>
+
+                        <select asp-for="RequestId"
+                                asp-items="ViewBag.Requests"
+                                class="log-input">
+
+                            <option value="">
+                                Select Maintenance Request
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="RequestId"
+                              class="log-validation">
+                        </span>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="log-field log-field-full">
+
+                        <label asp-for="RepairDetails">
+                            Repair Details
+                        </label>
+
+                        <textarea asp-for="RepairDetails"
+                                  class="log-input log-textarea"
+                                  placeholder="Describe the repair work performed..."></textarea>
+
+                        <span asp-validation-for="RepairDetails"
+                              class="log-validation">
+                        </span>
+
+                    </div>
+
+
+                    <!-- START DATE -->
+
+                    <div class="log-field">
+
+                        <label asp-for="RepairStartDate">
+                            Repair Start Date
+                        </label>
+
+                        <input asp-for="RepairStartDate"
+                               type="datetime-local"
+                               class="log-input" />
+
+                        <span asp-validation-for="RepairStartDate"
+                              class="log-validation">
+                        </span>
+
+                    </div>
+
+
+                    <!-- END DATE -->
+
+                    <div class="log-field">
+
+                        <label asp-for="RepairEndDate">
+                            Repair End Date
+                        </label>
+
+                        <input asp-for="RepairEndDate"
+                               type="datetime-local"
+                               class="log-input" />
+
+                        <span asp-validation-for="RepairEndDate"
+                              class="log-validation">
+                        </span>
+
+                    </div>
+
+
+                    <!-- DEVICE STATUS -->
+
+                    <div class="log-field log-field-full">
+
+                        <label asp-for="DeviceStatusAfterRepair">
+                            Device Status After Repair
+                        </label>
+
+                        <select asp-for="DeviceStatusAfterRepair"
+                                class="log-input">
+
+                            <option value="">
+                                Select Device Status
+                            </option>
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Needs Further Maintenance">
+                                Needs Further Maintenance
+                            </option>
+
+                            <option value="Out of Service">
+                                Out of Service
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="DeviceStatusAfterRepair"
+                              class="log-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="log-form-actions">
+
+                    <button type="submit"
+                            class="log-primary-button">
+
+                        Save Maintenance Log
+
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="log-secondary-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial"
+        );
+    }
+
+}

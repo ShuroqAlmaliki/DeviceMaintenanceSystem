@@ -1,0 +1,281 @@
+@model IEnumerable<DeviceMaintenanceSystem.Models.MaintenanceLog>
+
+@{
+    ViewData["Title"] = "Maintenance Log";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var totalLogs = Model?.Count() ?? 0;
+
+    var completedLogs = Model?
+        .Count(x =>
+            x.RepairEndDate != default(DateTime)) ?? 0;
+
+    var activeLogs =
+        totalLogs - completedLogs;
+}
+
+<div class="logs-page">
+
+    <div class="logs-container">
+
+        <!-- PAGE HEADER -->
+
+        <div class="logs-header">
+
+            <div>
+
+                <div class="logs-label">
+                    MAINTENANCE MANAGEMENT
+                </div>
+
+                <h1>Maintenance Log</h1>
+
+                <p>
+                    Track repair activities and device maintenance history.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Create"
+               class="logs-add-button">
+
+                <span>+</span>
+                Add Maintenance Log
+
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="logs-stats">
+
+            <div class="logs-stat-card">
+
+                <div class="logs-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 4h14v16H5z" />
+                        <path d="M8 9h8" />
+                        <path d="M8 13h8" />
+                        <path d="M8 17h5" />
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span>Total Logs</span>
+
+                    <strong>
+                        @totalLogs
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="logs-stat-card">
+
+                <div class="logs-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span>Completed</span>
+
+                    <strong>
+                        @completedLogs
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="logs-stat-card">
+
+                <div class="logs-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12"
+                                cy="12"
+                                r="9" />
+
+                        <path d="M12 7v5l3 2" />
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span>In Progress</span>
+
+                    <strong>
+                        @activeLogs
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGS LIST -->
+
+        <div class="logs-table-card">
+
+            <div class="logs-table-header">
+
+                <div>
+
+                    <h2>Maintenance Records</h2>
+
+                    <p>
+                        All maintenance activities registered in the system.
+                    </p>
+
+                </div>
+
+
+                <div class="logs-count">
+                    @totalLogs Record@(totalLogs == 1 ? "" : "s")
+                </div>
+
+            </div>
+
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="logs-table-wrapper">
+
+                    <table class="logs-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Request ID</th>
+                                <th>Technician</th>
+                                <th>Repair Details</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Device Status</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <span class="log-id">
+                                            #@item.LogId
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="log-request-id">
+                                            #@item.RequestId
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        @item.UserId
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="log-repair-details">
+                                            @item.RepairDetails
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        @item.RepairStartDate.ToString("dd/MM/yyyy")
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (item.RepairEndDate != default(DateTime))
+                                        {
+                                            @item.RepairEndDate.ToString("dd/MM/yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="log-progress-status">
+                                                In Progress
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="log-device-status">
+                                            @item.DeviceStatusAfterRepair
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="logs-empty">
+
+                    <div class="logs-empty-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 4h14v16H5z" />
+                            <path d="M8 9h8" />
+                            <path d="M8 13h8" />
+                        </svg>
+
+                    </div>
+
+                    <h3>No Maintenance Logs Yet</h3>
+
+                    <p>
+                        Maintenance records will appear here after they are created.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

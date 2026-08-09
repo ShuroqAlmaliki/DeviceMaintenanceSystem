@@ -1,0 +1,176 @@
+@model DeviceMaintenanceSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Edit Department";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="department-form-page">
+
+    <div class="department-form-container">
+
+        <!-- HEADER -->
+
+        <div class="department-form-header">
+
+            <div>
+
+                <div class="departments-label">
+                    DEPARTMENT MANAGEMENT
+                </div>
+
+                <h1>Edit Department</h1>
+
+                <p>
+                    Update the information for
+                    <strong>@Model.DepartmentName</strong>.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Index"
+               class="department-back-button">
+
+                ← Back to Departments
+
+            </a>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <div class="department-form-card">
+
+            <div class="department-form-card-header">
+
+                <h2>Department Information</h2>
+
+                <p>
+                    Modify the required fields and save your changes.
+                </p>
+
+            </div>
+
+
+            <form asp-action="Edit"
+                  asp-route-departmentid="@Model.DepartmentId"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <div asp-validation-summary="ModelOnly"
+                     class="department-validation-summary">
+                </div>
+
+
+                <input type="hidden"
+                       asp-for="DepartmentId" />
+
+
+                <div class="department-form-grid">
+
+                    <div class="department-field">
+
+                        <label>
+                            Department ID
+                        </label>
+
+                        <input value="@Model.DepartmentId"
+                               class="department-input department-readonly"
+                               readonly />
+
+                    </div>
+
+
+                    <div class="department-field">
+
+                        <label asp-for="DepartmentName">
+                            Department Name
+                        </label>
+
+                        <input asp-for="DepartmentName"
+                               class="department-input" />
+
+                        <span asp-validation-for="DepartmentName"
+                              class="department-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="department-field">
+
+                        <label asp-for="HeadUserID">
+                            Head User ID
+                        </label>
+
+                        <input asp-for="HeadUserID"
+                               class="department-input"
+                               placeholder="Enter head user ID" />
+
+                        <span asp-validation-for="HeadUserID"
+                              class="department-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="department-field">
+
+                        <label asp-for="HeadUserName">
+                            Department Head Name
+                        </label>
+
+                        <input asp-for="HeadUserName"
+                               class="department-input"
+                               placeholder="Enter department head name" />
+
+                        <span asp-validation-for="HeadUserName"
+                              class="department-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="department-form-actions">
+
+                    <button type="submit"
+                            class="department-primary-button">
+
+                        Save Changes
+
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="department-secondary-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial"
+        );
+    }
+
+}
