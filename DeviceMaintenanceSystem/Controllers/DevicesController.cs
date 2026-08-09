@@ -2,131 +2,209 @@ using ZXing;
 using ZXing.Common;
 using System.Drawing;
 using System.Drawing.Imaging;
+using DeviceMaintenanceSystem.Data;
 using DeviceMaintenanceSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-public class DevicesController : Controller
+namespace DeviceMaintenanceSystem.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public DevicesController(ApplicationDbContext context)
+    public class DevicesController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    // GET: Devices
-    public async Task<IActionResult> Index()
-    {
-        return View(await _context.Devices.Include(d => d.Department).ToListAsync());
-    }
-
-    // GET: Devices/Details/5
-    public async Task<IActionResult> Details(string? id)
-    {
-        if (id == null)
+        public DevicesController(ApplicationDbContext context)
         {
-            return NotFound();
+            _context = context;
         }
 
-        var device = await _context.Devices
-            .Include(d => d.Department)
-            .FirstOrDefaultAsync(m => m.DeviceId == id);
 
-        if (device == null)
+        // =========================================
+        // INDEX
+        // =========================================
+
+        public async Task<IActionResult> Index()
         {
-            return NotFound();
+            var devices = await _context.Devices
+                .Include(d => d.Department)
+                .ToListAsync();
+
+            return View(devices);
         }
 
-        return View(device);
-    }
 
-    // GET: Devices/Create
-    // GET: Devices/Create
-    public IActionResult Create()
-    {
-        // تعبئة قائمة الأقسام لـ GET
-        ViewBag.DepartmentId = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
-        return View();
-    }
+        // =========================================
+        // DETAILS
+        // =========================================
 
-    // POST: Devices/Create
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("DeviceName,DeviceType,SerialNumber,DeviceStatus,BarcodeValue,DepartmentId")] Device device)
-    {
-        // 1. حساب أحدث رقم جهاز وتوليد ID تسلسلي جديد (مثال: DEV-001)
-        var maxId = await _context.Devices
-            .Select(d => d.DeviceId)
-            .ToListAsync();
-
-        // استخراج أعلى رقم مسجل وتزويده بـ 1
-        int nextNumber = maxId
-            .Select(id => int.TryParse(id?.Replace("DEV-", ""), out int num) ? num : 0)
-            .DefaultIfEmpty(0)
-            .Max() + 1;
-
-        // إسناد المعرف الجديد للجهاز (DEV-001, DEV-002, ...)
-        device.DeviceId = $"DEV-{nextNumber:D3}";
-
-        // ملاحظة: إذا أردت أرقاماً فقط بدون كلمة DEV، استبدل السطر السابـق بـ:
-        // device.DeviceId = nextNumber.ToString();
-
-        // 2. إزالة التحقق من الأخطاء للحقول المسندة تلقائياً أو غير المطلوبة
-        ModelState.Remove("DeviceId");
-        ModelState.Remove("Department");
-        ModelState.Remove("MaintenanceRequests");
-
-        if (ModelState.IsValid)
+        public async Task<IActionResult> Details(string? id)
         {
-            _context.Add(device);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var device = await _context.Devices
+                .Include(d => d.Department)
+                .FirstOrDefaultAsync(
+                    d => d.DeviceId == id
+                );
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            return View(device);
         }
 
-        // إعادة تعبئة قائمة الأقسام في حال وجود خطأ مدخلات
-        ViewBag.DepartmentId = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", device.DepartmentId);
-        return View(device);
-    }
 
-    // GET: Devices/Edit/5
-    public async Task<IActionResult> Edit(string? id)
-    {
-        if (id == null)
+        // =========================================
+        // CREATE - GET
+        // =========================================
+
+        public IActionResult Create()
         {
-            return NotFound();
+            ViewBag.DepartmentId = new SelectList(
+                _context.Departments,
+                "DepartmentId",
+                "DepartmentName"
+            );
+
+            return View();
         }
 
-        var device = await _context.Devices.FindAsync(id);
-        if (device == null)
+
+        // =========================================
+        // CREATE - POST
+        // =========================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            [Bind(
+                "DeviceName,DeviceType,SerialNumber,DeviceStatus,BarcodeValue,DepartmentId"
+            )]
+            Device device)
         {
-            return NotFound();
+            var ids = await _context.Devices
+                .Select(d => d.DeviceId)
+                .ToListAsync();
+
+            int nextNumber = ids
+                .Select(id =>
+                    int.TryParse(
+                        id?.Replace("DEV-", ""),
+                        out int number
+                    )
+                        ? number
+                        : 0
+                )
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+
+            device.DeviceId =
+                $"DEV-{nextNumber:D3}";
+
+            ModelState.Remove("DeviceId");
+            ModelState.Remove("Department");
+            ModelState.Remove("MaintenanceRequests");
+
+            if (ModelState.IsValid)
+            {
+                _context.Devices.Add(device);
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(
+                    nameof(Index)
+                );
+            }
+
+            ViewBag.DepartmentId =
+                new SelectList(
+                    _context.Departments,
+                    "DepartmentId",
+                    "DepartmentName",
+                    device.DepartmentId
+                );
+
+            return View(device);
         }
 
-        // تعبئة القائمة مع تحديد القسم الحالي للجهاز
-        ViewBag.DepartmentId = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", device.DepartmentId);
-        return View(device);
-    }
 
-    // POST: Devices/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string id, [Bind("DeviceId,DeviceName,DeviceType,SerialNumber,DeviceStatus,BarcodeValue,DepartmentId")] Device device)
-    {
-        if (id != device.DeviceId)
+        // =========================================
+        // EDIT - GET
+        // =========================================
+
+        public async Task<IActionResult> Edit(
+            string? id)
         {
-            return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var device =
+                await _context.Devices
+                    .FindAsync(id);
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.DepartmentId =
+                new SelectList(
+                    _context.Departments,
+                    "DepartmentId",
+                    "DepartmentName",
+                    device.DepartmentId
+                );
+
+            return View(device);
         }
 
-        ModelState.Remove("Department");
-        ModelState.Remove("MaintenanceRequests");
 
-        if (ModelState.IsValid)
+        // =========================================
+        // EDIT - POST
+        // =========================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+            string id,
+            [Bind(
+                "DeviceId,DeviceName,DeviceType,SerialNumber,DeviceStatus,BarcodeValue,DepartmentId"
+            )]
+            Device device)
         {
+            if (id != device.DeviceId)
+            {
+                return NotFound();
+            }
+
+            ModelState.Remove("Department");
+            ModelState.Remove("MaintenanceRequests");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.DepartmentId =
+                    new SelectList(
+                        _context.Departments,
+                        "DepartmentId",
+                        "DepartmentName",
+                        device.DepartmentId
+                    );
+
+                return View(device);
+            }
+
             try
             {
                 _context.Update(device);
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -135,174 +213,208 @@ public class DevicesController : Controller
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
-            return RedirectToAction(nameof(Index));
-        }
 
-        // إعادة تعبئة القائمة في حال عدم صحة النموذج
-        ViewBag.DepartmentId = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", device.DepartmentId);
-        return View(device);
-    }
-
-    // GET: Devices/Delete/5
-    public async Task<IActionResult> Delete(string? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var device = await _context.Devices
-            .Include(d => d.Department)
-            .FirstOrDefaultAsync(m => m.DeviceId == id);
-
-        if (device == null)
-        {
-            return NotFound();
-        }
-
-        return View(device);
-    }
-
-    // POST: Devices/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(string id)
-    {
-        var device = await _context.Devices.FindAsync(id);
-        if (device != null)
-        {
-            _context.Devices.Remove(device);
-        }
-
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
-
-    // ==========================================
-    //  الدوال الجديدة المضافة (History & PrintBarcode)
-    // ==========================================
-
-    // GET: Devices/History/5
-    public async Task<IActionResult> History(string? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        // جلب الجهاز مع تضمين السجلات التابعة له (مثل طلبات الصيانة)
-        var device = await _context.Devices
-            .Include(d => d.Department)
-            .Include(d => d.MaintenanceRequests)
-            .FirstOrDefaultAsync(m => m.DeviceId == id);
-
-        if (device == null)
-        {
-            return NotFound();
-        }
-
-        return View(device);
-    }
-
-    // GET: Devices/PrintBarcode/5
-    public async Task<IActionResult> PrintBarcode(string? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var device = await _context.Devices.FindAsync(id);
-
-        if (device == null)
-        {
-            return NotFound();
+            return RedirectToAction(
+                nameof(Index)
+            );
         }
 
 
-        // توليد قيمة باركود جديدة
-        device.BarcodeValue =
-            $"DEV-{device.DeviceId}-{DateTime.Now:yyyyMMddHHmmss}";
+        // =========================================
+        // DELETE - GET
+        // =========================================
 
-
-        // حفظ القيمة الجديدة
-        await _context.SaveChangesAsync();
-
-
-        // إنشاء صورة الباركود
-        var writer = new BarcodeWriterPixelData()
+        public async Task<IActionResult> Delete(
+            string? id)
         {
-            Format = BarcodeFormat.CODE_128,
-
-            Options = new EncodingOptions
+            if (id == null)
             {
-                Height = 120,
-                Width = 350,
-                Margin = 10
+                return NotFound();
             }
-        };
+
+            var device =
+                await _context.Devices
+                    .Include(d => d.Department)
+                    .FirstOrDefaultAsync(
+                        d => d.DeviceId == id
+                    );
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            return View(device);
+        }
 
 
-        var pixelData = writer.Write(device.BarcodeValue);
+        // =========================================
+        // DELETE - POST
+        // =========================================
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(
+            string id)
+        {
+            var device =
+                await _context.Devices
+                    .FindAsync(id);
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            _context.Devices.Remove(device);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(
+                nameof(Index)
+            );
+        }
 
 
-        using var bitmap = new Bitmap(
-            pixelData.Width,
-            pixelData.Height,
-            PixelFormat.Format32bppRgb
-        );
+        // =========================================
+        // HISTORY
+        // =========================================
+
+        public async Task<IActionResult> History(
+            string? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var device =
+                await _context.Devices
+                    .Include(d => d.Department)
+                    .Include(
+                        d => d.MaintenanceRequests
+                    )
+                    .FirstOrDefaultAsync(
+                        d => d.DeviceId == id
+                    );
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            return View(device);
+        }
 
 
-        var bitmapData = bitmap.LockBits(
-            new Rectangle(
-                0,
-                0,
-                bitmap.Width,
-                bitmap.Height
-            ),
-            ImageLockMode.WriteOnly,
-            bitmap.PixelFormat
-        );
+        // =========================================
+        // PRINT BARCODE
+        // =========================================
+
+        public async Task<IActionResult> PrintBarcode(
+            string? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var device =
+                await _context.Devices
+                    .FindAsync(id);
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            device.BarcodeValue =
+                $"DEV-{device.DeviceId}-{DateTime.Now:yyyyMMddHHmmss}";
+
+            await _context.SaveChangesAsync();
+
+            var writer =
+                new BarcodeWriterPixelData
+                {
+                    Format =
+                        BarcodeFormat.CODE_128,
+
+                    Options =
+                        new EncodingOptions
+                        {
+                            Height = 120,
+                            Width = 350,
+                            Margin = 10
+                        }
+                };
+
+            var pixelData =
+                writer.Write(
+                    device.BarcodeValue
+                );
+
+            using var bitmap =
+                new Bitmap(
+                    pixelData.Width,
+                    pixelData.Height,
+                    PixelFormat.Format32bppRgb
+                );
+
+            var bitmapData =
+                bitmap.LockBits(
+                    new Rectangle(
+                        0,
+                        0,
+                        bitmap.Width,
+                        bitmap.Height
+                    ),
+                    ImageLockMode.WriteOnly,
+                    bitmap.PixelFormat
+                );
+
+            System.Runtime.InteropServices
+                .Marshal.Copy(
+                    pixelData.Pixels,
+                    0,
+                    bitmapData.Scan0,
+                    pixelData.Pixels.Length
+                );
+
+            bitmap.UnlockBits(
+                bitmapData
+            );
+
+            using var stream =
+                new MemoryStream();
+
+            bitmap.Save(
+                stream,
+                ImageFormat.Png
+            );
+
+            ViewBag.BarcodeImage =
+                "data:image/png;base64," +
+                Convert.ToBase64String(
+                    stream.ToArray()
+                );
+
+            return View(device);
+        }
 
 
-        System.Runtime.InteropServices.Marshal.Copy(
-            pixelData.Pixels,
-            0,
-            bitmapData.Scan0,
-            pixelData.Pixels.Length
-        );
+        // =========================================
+        // CHECK DEVICE
+        // =========================================
 
-
-        bitmap.UnlockBits(bitmapData);
-
-
-        using var stream = new MemoryStream();
-
-
-        bitmap.Save(
-            stream,
-            ImageFormat.Png
-        );
-
-
-        ViewBag.BarcodeImage =
-            "data:image/png;base64," +
-            Convert.ToBase64String(stream.ToArray());
-
-
-        return View(device);
+        private bool DeviceExists(
+            string id)
+        {
+            return _context.Devices.Any(
+                d => d.DeviceId == id
+            );
+        }
     }
-
-
-    // التحقق من وجود الجهاز
-    private bool DeviceExists(string id)
-    {
-        return _context.Devices.Any(e => e.DeviceId == id);
-    }
-
 }

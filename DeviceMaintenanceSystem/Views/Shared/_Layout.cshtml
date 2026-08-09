@@ -5,17 +5,22 @@
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8" />
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - Device Maintenance System</title>
+    <title>
+        @ViewData["Title"] - Device Maintenance System
+    </title>
 
     <link rel="stylesheet"
           href="~/css/site.css"
           asp-append-version="true" />
+
 </head>
+
 
 <body>
 
@@ -27,7 +32,10 @@
 
         <aside class="app-sidebar">
 
-            <!-- BRAND -->
+
+            <!-- =====================================
+                 BRAND
+                 ===================================== -->
 
             <div class="sidebar-brand">
 
@@ -36,118 +44,348 @@
                 </div>
 
                 <div class="sidebar-brand-text">
-                    <h2>Taif University</h2>
-                    <p>Technical Support Department</p>
+
+                    <h2>
+                        Taif University
+                    </h2>
+
+                    <p>
+                        Technical Support Department
+                    </p>
+
                 </div>
 
             </div>
 
 
-            <!-- NAVIGATION -->
+            <!-- =====================================
+                 NAVIGATION
+                 ===================================== -->
 
             <nav class="sidebar-navigation">
 
+
+                <!-- =================================
+                     REQUESTER
+                     ================================= -->
                 @if (User.IsInRole("Requester"))
                 {
                     <a asp-controller="Requests"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">⌂</span>
-                        <span>Home</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 11.5L12 4l9 7.5" />
+                                <path d="M5 10.5V20h14v-9.5" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Home
+                        </span>
 
                     </a>
+
 
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Create"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">＋</span>
-                        <span>New Request</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 5v14" />
+                                <path d="M5 12h14" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            New Request
+                        </span>
 
                     </a>
+
 
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">▣</span>
-                        <span>My Requests</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <rect x="5"
+                                      y="4"
+                                      width="14"
+                                      height="16"
+                                      rx="2" />
+
+                                <path d="M8 9h8" />
+                                <path d="M8 13h8" />
+                                <path d="M8 17h5" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            My Requests
+                        </span>
 
                     </a>
                 }
 
 
+                <!-- =================================
+                     DEPARTMENT HEAD
+                     ================================= -->
                 @if (User.IsInRole("DepartmentHead"))
                 {
                     <a asp-controller="Approvals"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">⌂</span>
-                        <span>Home</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 11.5L12 4l9 7.5" />
+                                <path d="M5 10.5V20h14v-9.5" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Home
+                        </span>
 
                     </a>
+
 
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">▣</span>
-                        <span>Maintenance Requests</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <rect x="5"
+                                      y="4"
+                                      width="14"
+                                      height="16"
+                                      rx="2" />
+
+                                <path d="M8 9h8" />
+                                <path d="M8 13h8" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Maintenance Requests
+                        </span>
 
                     </a>
                 }
 
 
+                <!-- =================================
+                     MAINTENANCE STAFF
+                     ================================= -->
                 @if (User.IsInRole("MaintenanceStaff"))
                 {
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">⌂</span>
-                        <span>Home</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 11.5L12 4l9 7.5" />
+                                <path d="M5 10.5V20h14v-9.5" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Home
+                        </span>
 
                     </a>
+
 
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">▣</span>
-                        <span>Maintenance Requests</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <rect x="5"
+                                      y="4"
+                                      width="14"
+                                      height="16"
+                                      rx="2" />
+
+                                <path d="M8 9h8" />
+                                <path d="M8 13h8" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Maintenance Requests
+                        </span>
 
                     </a>
+
+
+                    <a asp-controller="Devices"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4"
+                                      y="5"
+                                      width="16"
+                                      height="12"
+                                      rx="2" />
+
+                                <path d="M8 21h8" />
+                                <path d="M12 17v4" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Devices
+                        </span>
+
+                    </a>
+
 
                     <a asp-controller="MaintenanceLogs"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">☷</span>
-                        <span>Maintenance Log</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 5h14v14H5z" />
+                                <path d="M8 9h8" />
+                                <path d="M8 13h8" />
+                                <path d="M8 17h5" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Maintenance Log
+                        </span>
 
                     </a>
                 }
 
 
+                <!-- =================================
+                     ADMIN
+                     ================================= -->
                 @if (User.IsInRole("Admin"))
                 {
                     <a asp-controller="Admin"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">⌂</span>
-                        <span>Home</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 11.5L12 4l9 7.5" />
+                                <path d="M5 10.5V20h14v-9.5" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Home
+                        </span>
 
                     </a>
+
+
+                    <a asp-controller="Devices"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4"
+                                      y="5"
+                                      width="16"
+                                      height="12"
+                                      rx="2" />
+
+                                <path d="M8 21h8" />
+                                <path d="M12 17v4" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Devices
+                        </span>
+
+                    </a>
+
+
+                    <a asp-controller="Departments"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 21V5h10v16" />
+                                <path d="M14 9h6v12" />
+                                <path d="M8 9h2" />
+                                <path d="M8 13h2" />
+                                <path d="M8 17h2" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Departments
+                        </span>
+
+                    </a>
+
 
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Index"
                        class="sidebar-link">
 
-                        <span class="sidebar-icon">▣</span>
-                        <span>Maintenance Requests</span>
+                        <span class="sidebar-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <rect x="5"
+                                      y="4"
+                                      width="14"
+                                      height="16"
+                                      rx="2" />
+
+                                <path d="M8 9h8" />
+                                <path d="M8 13h8" />
+                            </svg>
+
+                        </span>
+
+                        <span>
+                            Maintenance Requests
+                        </span>
 
                     </a>
                 }
@@ -163,13 +401,15 @@
 
         <div class="app-main">
 
-            <!-- =========================================
+
+            <!-- =====================================
                  HEADER
-                 ========================================= -->
+                 ===================================== -->
 
             <header class="app-header">
 
                 <div class="header-actions">
+
 
                     <!-- USER -->
                     @if (User.Identity?.IsAuthenticated == true)
@@ -177,8 +417,13 @@
                         <div class="header-user">
 
                             <div class="header-avatar">
-                                @((User.Identity.Name ?? "U").Substring(0, 1).ToUpper())
+
+                                @((User.Identity.Name ?? "U")
+                                    .Substring(0, 1)
+                                    .ToUpper())
+
                             </div>
+
 
                             <div class="header-user-info">
 
@@ -206,7 +451,13 @@
                         <svg viewBox="0 0 24 24"
                              class="notification-icon">
 
-                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                            <path d="
+                            M18 8
+                            a6 6 0 0 0-12 0
+                            c0 7-3 7-3 9
+                            h18
+                            c0-2-3-2-3-9
+                            " />
 
                             <path d="M10 21h4" />
 
@@ -234,7 +485,13 @@
 
                                 <path d="M15 12H3" />
 
-                                <path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5" />
+                                <path d="
+                                M14 3h5
+                                a2 2 0 0 1 2 2
+                                v14
+                                a2 2 0 0 1-2 2
+                                h-5
+                                " />
 
                             </svg>
 
@@ -251,9 +508,9 @@
             </header>
 
 
-            <!-- =========================================
+            <!-- =====================================
                  PAGE CONTENT
-                 ========================================= -->
+                 ===================================== -->
 
             <main class="app-content">
 
@@ -262,13 +519,14 @@
             </main>
 
 
-            <!-- =========================================
+            <!-- =====================================
                  FOOTER
-                 ========================================= -->
+                 ===================================== -->
 
             <footer class="app-footer">
 
-                Device Maintenance System | Taif University © 2026
+                Device Maintenance System |
+                Taif University © 2026
 
             </footer>
 

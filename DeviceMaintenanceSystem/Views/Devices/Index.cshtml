@@ -1,0 +1,401 @@
+@model IEnumerable<DeviceMaintenanceSystem.Models.Device>
+
+@{
+    ViewData["Title"] = "Devices";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var totalDevices = Model?.Count() ?? 0;
+
+    var activeDevices = Model?
+        .Count(x => x.DeviceStatus != null &&
+                    x.DeviceStatus.ToLower() == "active") ?? 0;
+
+    var maintenanceDevices = Model?
+        .Count(x => x.DeviceStatus != null &&
+                    (x.DeviceStatus.ToLower() == "maintenance" ||
+                     x.DeviceStatus.ToLower() == "under maintenance")) ?? 0;
+}
+
+<div class="devices-page">
+
+    <div class="devices-container">
+
+        <!-- =========================================
+             PAGE HEADER
+             ========================================= -->
+
+        <div class="devices-header">
+
+            <div class="devices-title-area">
+
+                <div class="devices-small-title">
+                    DEVICE MANAGEMENT
+                </div>
+
+                <h1>Devices</h1>
+
+                <p>
+                    Manage and track all registered university devices.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Create"
+               class="devices-add-button">
+
+                <span class="devices-add-icon">+</span>
+                <span>Add New Device</span>
+
+            </a>
+
+        </div>
+
+
+        <!-- =========================================
+             STATISTICS
+             ========================================= -->
+
+        <div class="devices-stats">
+
+            <!-- TOTAL DEVICES -->
+
+            <div class="devices-stat-card">
+
+                <div class="devices-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4"
+                              y="5"
+                              width="16"
+                              height="12"
+                              rx="2"></rect>
+
+                        <path d="M8 21h8"></path>
+                        <path d="M12 17v4"></path>
+                    </svg>
+
+                </div>
+
+                <div class="devices-stat-content">
+
+                    <span>Total Devices</span>
+
+                    <strong>
+                        @totalDevices
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVE -->
+
+            <div class="devices-stat-card">
+
+                <div class="devices-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 6L9 17l-5-5"></path>
+                    </svg>
+
+                </div>
+
+                <div class="devices-stat-content">
+
+                    <span>Active</span>
+
+                    <strong>
+                        @activeDevices
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAINTENANCE -->
+
+            <div class="devices-stat-card">
+
+                <div class="devices-stat-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14.7 6.3a4 4 0 0 0-5-5L7 4l3 3-6.5 6.5a2.1 2.1 0 0 0 3 3L13 10l3 3 2.7-2.7a4 4 0 0 0-4-4z"></path>
+                    </svg>
+
+                </div>
+
+                <div class="devices-stat-content">
+
+                    <span>Under Maintenance</span>
+
+                    <strong>
+                        @maintenanceDevices
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             DEVICES TABLE
+             ========================================= -->
+
+        <div class="devices-table-card">
+
+            <div class="devices-table-header">
+
+                <div>
+
+                    <h2>Devices List</h2>
+
+                    <p>
+                        All devices registered in the maintenance system.
+                    </p>
+
+                </div>
+
+                <div class="devices-count">
+                    @totalDevices Device@(totalDevices == 1 ? "" : "s")
+                </div>
+
+            </div>
+
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="devices-table-wrapper">
+
+                    <table class="devices-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Device ID</th>
+
+                                <th>Device Name</th>
+
+                                <th>Type</th>
+
+                                <th>Serial Number</th>
+
+                                <th>Status</th>
+
+                                <th>Barcode</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <!-- DEVICE ID -->
+
+                                    <td>
+
+                                        <span class="device-id">
+                                            #@item.DeviceId
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- DEVICE NAME -->
+
+                                    <td>
+
+                                        <div class="device-name-cell">
+
+                                            <div class="device-mini-icon">
+
+                                                <svg viewBox="0 0 24 24">
+                                                    <rect x="4"
+                                                          y="5"
+                                                          width="16"
+                                                          height="12"
+                                                          rx="2"></rect>
+
+                                                    <path d="M8 21h8"></path>
+                                                    <path d="M12 17v4"></path>
+                                                </svg>
+
+                                            </div>
+
+                                            <strong>
+                                                @item.DeviceName
+                                            </strong>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- TYPE -->
+
+                                    <td>
+                                        @item.DeviceType
+                                    </td>
+
+
+                                    <!-- SERIAL NUMBER -->
+
+                                    <td>
+
+                                        <span class="device-serial">
+                                            @item.SerialNumber
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        @{
+                                            var status =
+                                                item.DeviceStatus?
+                                                .Trim()
+                                                .ToLower() ?? "";
+
+                                            var statusClass =
+                                                status == "active"
+                                                ? "device-status-active"
+                                                : status == "maintenance" ||
+                                                  status == "under maintenance"
+                                                ? "device-status-maintenance"
+                                                : "device-status-default";
+                                        }
+
+                                        <span class="device-status @statusClass">
+                                            @item.DeviceStatus
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- BARCODE -->
+
+                                    <td>
+
+                                        <span class="device-barcode">
+                                            @(string.IsNullOrWhiteSpace(item.BarcodeValue)
+                                                ? "Not Generated"
+                                                : item.BarcodeValue)
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <td>
+
+                                        <div class="device-actions">
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.DeviceId"
+                                               class="device-action-button"
+                                               title="View Details">
+
+                                                Details
+
+                                            </a>
+
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.DeviceId"
+                                               class="device-action-button">
+
+                                                Edit
+
+                                            </a>
+
+
+                                            <a asp-action="PrintBarcode"
+                                               asp-route-id="@item.DeviceId"
+                                               class="device-action-button device-barcode-button">
+
+                                                Barcode
+
+                                            </a>
+
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.DeviceId"
+                                               class="device-action-button device-delete-button">
+
+                                                Delete
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <!-- =========================================
+                     EMPTY STATE
+                     ========================================= -->
+
+                <div class="devices-empty-state">
+
+                    <div class="devices-empty-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <rect x="4"
+                                  y="5"
+                                  width="16"
+                                  height="12"
+                                  rx="2"></rect>
+
+                            <path d="M8 21h8"></path>
+                            <path d="M12 17v4"></path>
+                        </svg>
+
+                    </div>
+
+                    <h3>No Devices Found</h3>
+
+                    <p>
+                        There are currently no devices registered in the system.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="devices-empty-button">
+
+                        Add First Device
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,230 @@
+@model DeviceMaintenanceSystem.Models.Device
+
+@{
+    ViewData["Title"] = "Edit Device";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="device-form-page">
+
+    <div class="device-form-container">
+
+        <div class="device-form-header">
+
+            <div>
+
+                <div class="device-page-label">
+                    DEVICE MANAGEMENT
+                </div>
+
+                <h1>Edit Device</h1>
+
+                <p>
+                    Update the information for
+                    <strong>@Model.DeviceName</strong>.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Index"
+               class="device-back-button">
+                ← Back to Devices
+            </a>
+
+        </div>
+
+
+        <div class="device-form-card">
+
+            <div class="device-form-card-header">
+
+                <h2>Device Information</h2>
+
+                <p>
+                    Modify the required fields and save your changes.
+                </p>
+
+            </div>
+
+
+            <form asp-action="Edit"
+                  asp-route-id="@Model.DeviceId"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="device-validation-summary">
+                </div>
+
+                <input type="hidden"
+                       asp-for="DeviceId" />
+
+
+                <div class="device-form-grid">
+
+                    <div class="device-field">
+
+                        <label>
+                            Device ID
+                        </label>
+
+                        <input value="@Model.DeviceId"
+                               class="device-input device-readonly"
+                               readonly />
+
+                    </div>
+
+
+                    <div class="device-field">
+
+                        <label asp-for="DeviceName">
+                            Device Name
+                        </label>
+
+                        <input asp-for="DeviceName"
+                               class="device-input" />
+
+                        <span asp-validation-for="DeviceName"
+                              class="device-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="device-field">
+
+                        <label asp-for="DeviceType">
+                            Device Type
+                        </label>
+
+                        <input asp-for="DeviceType"
+                               class="device-input" />
+
+                        <span asp-validation-for="DeviceType"
+                              class="device-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="device-field">
+
+                        <label asp-for="SerialNumber">
+                            Serial Number
+                        </label>
+
+                        <input asp-for="SerialNumber"
+                               class="device-input" />
+
+                        <span asp-validation-for="SerialNumber"
+                              class="device-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="device-field">
+
+                        <label asp-for="DeviceStatus">
+                            Device Status
+                        </label>
+
+                        <select asp-for="DeviceStatus"
+                                class="device-input">
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Under Maintenance">
+                                Under Maintenance
+                            </option>
+
+                            <option value="Out of Service">
+                                Out of Service
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="DeviceStatus"
+                              class="device-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="device-field">
+
+                        <label asp-for="BarcodeValue">
+                            Barcode Value
+                        </label>
+
+                        <input asp-for="BarcodeValue"
+                               class="device-input" />
+
+                        <span asp-validation-for="BarcodeValue"
+                              class="device-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="device-field device-field-full">
+
+                        <label asp-for="DepartmentId">
+                            Department
+                        </label>
+
+                        <select asp-for="DepartmentId"
+                                asp-items="ViewBag.DepartmentId"
+                                class="device-input">
+
+                            <option value="">
+                                Select Department
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="DepartmentId"
+                              class="device-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="device-form-actions">
+
+                    <button type="submit"
+                            class="device-primary-button">
+                        Save Changes
+                    </button>
+
+                    <a asp-action="Index"
+                       class="device-secondary-button">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial"
+        );
+    }
+
+}

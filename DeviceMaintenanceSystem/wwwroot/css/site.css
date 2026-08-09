@@ -2334,3 +2334,1095 @@ body {
 /* =========================================================
    REQUESTER HOME PAGE - END
    ========================================================= */
+/* =========================================================
+   DEVICES PAGE - START
+   ========================================================= */
+
+.devices-page,
+.devices-page * {
+    box-sizing: border-box;
+}
+
+.devices-page {
+    width: 100%;
+    min-height: calc(100vh - 72px);
+    padding: 48px 5% 60px;
+    background: radial-gradient( circle at 88% 10%, rgba(34, 132, 255, 0.14), transparent 30% ), #f3f6fb;
+    color: #172033;
+}
+
+.devices-container {
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.devices-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 36px;
+}
+
+.devices-title-area {
+    max-width: 650px;
+}
+
+.devices-small-title {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    margin-bottom: 16px;
+    padding: 0 15px;
+    border: 1px solid #c9ddf6;
+    border-radius: 50px;
+    background: #edf6ff;
+    color: #1478e9;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.devices-title-area h1 {
+    margin: 0 0 10px;
+    color: #10213d;
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.devices-title-area p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   ADD DEVICE BUTTON
+   ========================================================= */
+
+.devices-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 20px;
+    border-radius: 12px;
+    background: linear-gradient( 135deg, #087af2, #168cff );
+    box-shadow: 0 10px 25px rgba(8, 122, 242, 0.22);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+    .devices-add-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(8, 122, 242, 0.28);
+        color: #ffffff;
+    }
+
+.devices-add-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.devices-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.devices-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-height: 125px;
+    padding: 24px;
+    border: 1px solid #e1e9f3;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 25px rgba(25, 50, 85, 0.05);
+}
+
+.devices-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #edf6ff;
+    color: #1684ff;
+}
+
+    .devices-stat-icon svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.devices-stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .devices-stat-content span {
+        color: #8492a6;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .devices-stat-content strong {
+        color: #10213d;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.devices-table-card {
+    overflow: hidden;
+    border: 1px solid #e1e9f3;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 10px 35px rgba(25, 50, 85, 0.06);
+}
+
+.devices-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 26px 30px;
+    border-bottom: 1px solid #e9eef5;
+}
+
+    .devices-table-header h2 {
+        margin: 0 0 6px;
+        color: #10213d;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .devices-table-header p {
+        margin: 0;
+        color: #8492a6;
+        font-size: 12px;
+    }
+
+.devices-count {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: #edf6ff;
+    color: #1478e9;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.devices-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.devices-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+    .devices-table thead {
+        background: #f7f9fc;
+    }
+
+    .devices-table th {
+        padding: 15px 18px;
+        border-bottom: 1px solid #e5ebf3;
+        color: #728197;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-align: left;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .devices-table td {
+        padding: 18px;
+        border-bottom: 1px solid #edf1f6;
+        color: #4b5b70;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .devices-table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+        .devices-table tbody tr:hover {
+            background: #f9fbfe;
+        }
+
+        .devices-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+
+/* =========================================================
+   DEVICE INFORMATION
+   ========================================================= */
+
+.device-id {
+    color: #1478e9;
+    font-weight: 800;
+}
+
+.device-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .device-name-cell strong {
+        color: #24344d;
+        font-size: 12px;
+    }
+
+.device-mini-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #edf6ff;
+    color: #1684ff;
+}
+
+    .device-mini-icon svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.device-serial {
+    color: #53647a;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+}
+
+.device-barcode {
+    color: #65758a;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   DEVICE STATUS
+   ========================================================= */
+
+.device-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+    padding: 6px 10px;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.device-status-active {
+    background: #e9f9f0;
+    color: #16834f;
+}
+
+.device-status-maintenance {
+    background: #fff6e5;
+    color: #b77700;
+}
+
+.device-status-default {
+    background: #edf1f6;
+    color: #66758a;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.device-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.device-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 31px;
+    padding: 0 10px;
+    border: 1px solid #dbe5f0;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #4d617a;
+    font-size: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.15s ease;
+    white-space: nowrap;
+}
+
+    .device-action-button:hover {
+        border-color: #1684ff;
+        background: #edf6ff;
+        color: #1478e9;
+    }
+
+.device-barcode-button {
+    border-color: #cce2fb;
+    color: #1478e9;
+}
+
+.device-delete-button {
+    border-color: #f1d7dc;
+    color: #c54b5d;
+}
+
+    .device-delete-button:hover {
+        border-color: #e9aeb7;
+        background: #fff2f4;
+        color: #b72f44;
+    }
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.devices-empty-state {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 330px;
+    padding: 45px 20px;
+    text-align: center;
+}
+
+.devices-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 18px;
+    border-radius: 17px;
+    background: #edf6ff;
+    color: #1684ff;
+}
+
+    .devices-empty-icon svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.devices-empty-state h3 {
+    margin: 0 0 8px;
+    color: #24344d;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.devices-empty-state p {
+    max-width: 380px;
+    margin: 0 0 20px;
+    color: #8492a6;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.devices-empty-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 17px;
+    border-radius: 9px;
+    background: #1684ff;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .devices-empty-button:hover {
+        background: #086bdc;
+        color: #ffffff;
+    }
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+    .devices-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .devices-page {
+        padding: 30px 20px 45px;
+    }
+
+    .devices-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .devices-title-area h1 {
+        font-size: 30px;
+    }
+
+    .devices-add-button {
+        align-self: flex-start;
+    }
+
+    .devices-table-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* =========================================================
+   DEVICES PAGE - END
+   ========================================================= */
+/* =========================================================
+   DEVICE INNER PAGES - START
+   Create / Edit / Details / Delete / Barcode
+   ========================================================= */
+
+.device-form-page,
+.device-details-page,
+.device-delete-page,
+.device-barcode-page {
+    width: 100%;
+    min-height: calc(100vh - 82px);
+    padding: 45px 5% 60px;
+    background: radial-gradient( circle at 88% 12%, rgba(42, 139, 255, 0.12), transparent 30% ), #f3f6fb;
+    color: #172033;
+}
+
+.device-form-container,
+.device-details-container,
+.device-delete-container,
+.device-barcode-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   COMMON HEADER
+   ========================================= */
+
+.device-form-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+    .device-form-header h1 {
+        margin: 14px 0 8px;
+        color: #10213d;
+        font-size: 36px;
+        font-weight: 800;
+    }
+
+    .device-form-header p {
+        margin: 0;
+        color: #75859a;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+.device-page-label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 31px;
+    padding: 0 14px;
+    border: 1px solid #c8def7;
+    border-radius: 50px;
+    background: #edf6ff;
+    color: #1478e9;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.device-danger-label {
+    border-color: #f1cbd2;
+    background: #fff1f3;
+    color: #c83e53;
+}
+
+.device-back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 15px;
+    border: 1px solid #d9e4f0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #52647b;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+    .device-back-button:hover {
+        border-color: #1684ff;
+        color: #1478e9;
+    }
+
+
+/* =========================================
+   FORM CARD
+   ========================================= */
+
+.device-form-card,
+.device-details-card,
+.device-delete-card,
+.device-barcode-card {
+    overflow: hidden;
+    border: 1px solid #e0e8f2;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 12px 35px rgba(27, 55, 90, 0.07);
+}
+
+.device-form-card-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid #e9eef5;
+}
+
+    .device-form-card-header h2 {
+        margin: 0 0 6px;
+        color: #172b49;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .device-form-card-header p {
+        margin: 0;
+        color: #8492a6;
+        font-size: 11px;
+    }
+
+
+/* =========================================
+   FORM
+   ========================================= */
+
+.device-form-card form {
+    padding: 30px;
+}
+
+.device-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.device-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.device-field-full {
+    grid-column: 1 / -1;
+}
+
+.device-field label {
+    color: #334861;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.device-input {
+    width: 100%;
+    min-height: 45px;
+    padding: 0 13px;
+    border: 1px solid #d9e3ef;
+    border-radius: 10px;
+    outline: none;
+    background: #fbfcfe;
+    color: #283b54;
+    font-family: inherit;
+    font-size: 12px;
+    transition: 0.2s ease;
+}
+
+    .device-input:focus {
+        border-color: #1684ff;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(22, 132, 255, 0.10);
+    }
+
+    .device-input::placeholder {
+        color: #a2afbf;
+    }
+
+select.device-input {
+    cursor: pointer;
+}
+
+.device-readonly {
+    background: #f0f3f7;
+    color: #8190a4;
+    cursor: not-allowed;
+}
+
+.device-validation,
+.device-validation-summary {
+    color: #d34255;
+    font-size: 10px;
+}
+
+.device-validation-summary {
+    margin-bottom: 18px;
+}
+
+
+/* =========================================
+   COMMON BUTTONS
+   ========================================= */
+
+.device-form-actions,
+.device-details-actions,
+.device-delete-actions,
+.device-barcode-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.device-primary-button,
+.device-secondary-button,
+.device-danger-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.device-primary-button {
+    background: linear-gradient( 135deg, #087af2, #168cff );
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(8, 122, 242, 0.20);
+}
+
+    .device-primary-button:hover {
+        transform: translateY(-1px);
+        color: #ffffff;
+    }
+
+.device-secondary-button {
+    border: 1px solid #d7e1ed;
+    background: #ffffff;
+    color: #586b82;
+}
+
+    .device-secondary-button:hover {
+        border-color: #1684ff;
+        color: #1478e9;
+    }
+
+.device-danger-button {
+    background: #dc4055;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(220, 64, 85, 0.18);
+}
+
+    .device-danger-button:hover {
+        background: #c93449;
+    }
+
+
+/* =========================================
+   DETAILS
+   ========================================= */
+
+.device-details-card {
+    padding: 30px;
+}
+
+.device-details-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e9eef5;
+}
+
+.device-details-main-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: #edf6ff;
+    color: #1684ff;
+}
+
+    .device-details-main-icon svg {
+        width: 25px;
+        height: 25px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.device-details-card-header span,
+.device-barcode-heading span {
+    color: #8796aa;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.device-details-card-header h2,
+.device-barcode-heading h2 {
+    margin: 3px 0;
+    color: #1a2e4a;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.device-details-card-header p,
+.device-barcode-heading p {
+    margin: 0;
+    color: #8796aa;
+    font-size: 11px;
+}
+
+.device-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.device-detail-item {
+    padding: 18px;
+    border: 1px solid #e6ecf3;
+    border-radius: 12px;
+    background: #f9fbfd;
+}
+
+    .device-detail-item span {
+        display: block;
+        margin-bottom: 6px;
+        color: #8a98aa;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .device-detail-item strong {
+        color: #2a3e59;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+.device-detail-wide {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================
+   DELETE
+   ========================================= */
+
+.device-delete-card {
+    padding: 30px;
+}
+
+.device-delete-warning {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 26px;
+    padding: 20px;
+    border: 1px solid #f2cbd2;
+    border-radius: 13px;
+    background: #fff6f7;
+}
+
+.device-warning-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #dc4055;
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.device-delete-warning h2 {
+    margin: 0 0 5px;
+    color: #a93244;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.device-delete-warning p {
+    margin: 0;
+    color: #a76c75;
+    font-size: 11px;
+}
+
+
+/* =========================================
+   BARCODE
+   ========================================= */
+
+.device-barcode-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.device-barcode-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 22px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e9eef5;
+}
+
+.device-barcode-device-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #edf6ff;
+    color: #1684ff;
+}
+
+    .device-barcode-device-icon svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.device-barcode-preview {
+    padding: 35px 25px;
+    border: 1px dashed #cddbea;
+    border-radius: 15px;
+    background: #fbfcfe;
+    text-align: center;
+}
+
+.device-barcode-title {
+    margin-bottom: 20px;
+    color: #8290a3;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.3px;
+}
+
+.device-barcode-image {
+    display: block;
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    margin: 0 auto 18px;
+}
+
+.device-barcode-value {
+    color: #33475f;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+    word-break: break-all;
+}
+
+.device-barcode-unavailable {
+    padding: 25px;
+    color: #9a6c72;
+    font-size: 11px;
+}
+
+
+/* =========================================
+   PRINT
+   ========================================= */
+
+@media print {
+
+    .app-sidebar,
+    .app-header,
+    .app-footer,
+    .no-print {
+        display: none !important;
+    }
+
+    .app-main {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .device-barcode-page {
+        padding: 0;
+        background: #ffffff;
+    }
+
+    .device-barcode-card {
+        border: 0;
+        box-shadow: none;
+    }
+
+    .device-barcode-preview {
+        border: 0;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 750px) {
+
+    .device-form-page,
+    .device-details-page,
+    .device-delete-page,
+    .device-barcode-page {
+        padding: 30px 20px 45px;
+    }
+
+    .device-form-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+        .device-form-header h1 {
+            font-size: 29px;
+        }
+
+    .device-form-grid,
+    .device-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .device-field-full,
+    .device-detail-wide {
+        grid-column: auto;
+    }
+
+    .device-form-card form,
+    .device-details-card,
+    .device-delete-card,
+    .device-barcode-card {
+        padding: 22px;
+    }
+}
+
+/* =========================================================
+   DEVICE INNER PAGES - END
+   ========================================================= */
+/* =========================================================
+   SIDEBAR SVG ICONS
+   ========================================================= */
+
+.sidebar-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}

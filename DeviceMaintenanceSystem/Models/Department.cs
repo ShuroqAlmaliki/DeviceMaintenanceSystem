@@ -11,9 +11,11 @@ namespace DeviceMaintenanceSystem.Models
         public string DepartmentName { get; set; } = string.Empty;
 
         public int? HeadUserID { get; set; }
+
         public string? HeadUserName { get; set; }
 
         // Navigation Properties
         public ICollection<Device> Devices { get; set; }
+            = new List<Device>();
     }
 }

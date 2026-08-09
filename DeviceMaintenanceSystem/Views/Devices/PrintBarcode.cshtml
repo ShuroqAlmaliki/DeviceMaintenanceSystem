@@ -1,0 +1,128 @@
+﻿@model DeviceMaintenanceSystem.Models.Device
+
+@{
+    ViewData["Title"] = "Device Barcode";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="device-barcode-page">
+
+    <div class="device-barcode-container">
+
+        <div class="device-form-header no-print">
+
+            <div>
+
+                <div class="device-page-label">
+                    DEVICE BARCODE
+                </div>
+
+                <h1>Print Barcode</h1>
+
+                <p>
+                    Generate and print the barcode for this device.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Index"
+               class="device-back-button">
+                ← Back to Devices
+            </a>
+
+        </div>
+
+
+        <div class="device-barcode-card">
+
+            <div class="device-barcode-heading">
+
+                <div class="device-barcode-device-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4"
+                              y="5"
+                              width="16"
+                              height="12"
+                              rx="2"></rect>
+
+                        <path d="M8 21h8"></path>
+                        <path d="M12 17v4"></path>
+                    </svg>
+
+                </div>
+
+
+                <div>
+
+                    <span>Device</span>
+
+                    <h2>
+                        @Model.DeviceName
+                    </h2>
+
+                    <p>
+                        ID: @Model.DeviceId
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="device-barcode-preview">
+
+                <div class="device-barcode-title">
+                    DEVICE BARCODE
+                </div>
+
+
+                @if (ViewBag.BarcodeImage != null)
+                {
+                    <img src="@ViewBag.BarcodeImage"
+                         alt="Device Barcode"
+                         class="device-barcode-image" />
+                }
+                else
+                {
+                    <div class="device-barcode-unavailable">
+                        Barcode image is unavailable.
+                    </div>
+                }
+
+
+                <div class="device-barcode-value">
+
+                    @Model.BarcodeValue
+
+                </div>
+
+            </div>
+
+
+            <div class="device-barcode-actions no-print">
+
+                <button type="button"
+                        onclick="window.print()"
+                        class="device-primary-button">
+
+                    Print Barcode
+
+                </button>
+
+
+                <a asp-action="Index"
+                   class="device-secondary-button">
+
+                    Back to Devices
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

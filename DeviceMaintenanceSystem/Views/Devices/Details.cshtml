@@ -1,0 +1,157 @@
+@model DeviceMaintenanceSystem.Models.Device
+
+@{
+    ViewData["Title"] = "Device Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="device-details-page">
+
+    <div class="device-details-container">
+
+        <div class="device-form-header">
+
+            <div>
+
+                <div class="device-page-label">
+                    DEVICE DETAILS
+                </div>
+
+                <h1>@Model.DeviceName</h1>
+
+                <p>
+                    View complete information about this device.
+                </p>
+
+            </div>
+
+
+            <a asp-action="Index"
+               class="device-back-button">
+                ← Back to Devices
+            </a>
+
+        </div>
+
+
+        <div class="device-details-card">
+
+            <div class="device-details-card-header">
+
+                <div class="device-details-main-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4"
+                              y="5"
+                              width="16"
+                              height="12"
+                              rx="2"></rect>
+
+                        <path d="M8 21h8"></path>
+                        <path d="M12 17v4"></path>
+                    </svg>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Device
+                    </span>
+
+                    <h2>
+                        @Model.DeviceName
+                    </h2>
+
+                    <p>
+                        @Model.DeviceId
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="device-details-grid">
+
+                <div class="device-detail-item">
+                    <span>Device ID</span>
+                    <strong>@Model.DeviceId</strong>
+                </div>
+
+
+                <div class="device-detail-item">
+                    <span>Device Name</span>
+                    <strong>@Model.DeviceName</strong>
+                </div>
+
+
+                <div class="device-detail-item">
+                    <span>Device Type</span>
+                    <strong>@Model.DeviceType</strong>
+                </div>
+
+
+                <div class="device-detail-item">
+                    <span>Serial Number</span>
+                    <strong>@Model.SerialNumber</strong>
+                </div>
+
+
+                <div class="device-detail-item">
+                    <span>Status</span>
+
+                    <strong>
+                        @Model.DeviceStatus
+                    </strong>
+                </div>
+
+
+                <div class="device-detail-item">
+                    <span>Barcode Value</span>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.BarcodeValue)
+                            ? "Not Generated"
+                            : Model.BarcodeValue)
+                    </strong>
+
+                </div>
+
+
+                <div class="device-detail-item device-detail-wide">
+
+                    <span>Department</span>
+
+                    <strong>
+                        @(Model.Department?.DepartmentName
+                            ?? $"Department #{Model.DepartmentId}")
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="device-details-actions">
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.DeviceId"
+                   class="device-primary-button">
+                    Edit Device
+                </a>
+
+                <a asp-action="PrintBarcode"
+                   asp-route-id="@Model.DeviceId"
+                   class="device-secondary-button">
+                    View Barcode
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

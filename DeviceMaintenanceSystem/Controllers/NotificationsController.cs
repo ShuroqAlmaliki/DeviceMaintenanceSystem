@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DeviceMaintenanceSystem.Data;
 using DeviceMaintenanceSystem.Models;
 
 namespace DeviceMaintenanceSystem.Controllers
@@ -8,7 +9,8 @@ namespace DeviceMaintenanceSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public NotificationsController(ApplicationDbContext context)
+        public NotificationsController(
+            ApplicationDbContext context)
         {
             _context = context;
         }
@@ -17,11 +19,13 @@ namespace DeviceMaintenanceSystem.Controllers
         // INDEX
         // عرض إشعارات المستخدم الحالي فقط
         // =========================================
+
         [HttpGet("/Notifications")]
         [HttpGet("/Notifications/Index")]
         public async Task<IActionResult> Index()
         {
-            var currentUserId = User.Identity?.Name;
+            var currentUserId =
+                User.Identity?.Name;
 
             if (string.IsNullOrEmpty(currentUserId))
             {
@@ -33,8 +37,15 @@ namespace DeviceMaintenanceSystem.Controllers
 
             var notifications =
                 await _context.Notifications
-                    .Where(n => n.UserId == currentUserId)
-                    .OrderByDescending(n => n.NotificationDate)
+                    .Where(
+                        n =>
+                            n.UserId ==
+                            currentUserId
+                    )
+                    .OrderByDescending(
+                        n =>
+                            n.NotificationDate
+                    )
                     .ToListAsync();
 
             return View(notifications);
