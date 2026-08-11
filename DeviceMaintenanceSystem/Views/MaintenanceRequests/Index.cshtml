@@ -10,6 +10,10 @@
         x.RequestStatus != null &&
         x.RequestStatus.ToLower() == "pending") ?? 0;
 
+    var approvedRequests = Model?.Count(x =>
+        x.RequestStatus != null &&
+        x.RequestStatus.ToLower() == "approved") ?? 0;
+
     var completedRequests = Model?.Count(x =>
         x.RequestStatus != null &&
         x.RequestStatus.ToLower() == "completed") ?? 0;
@@ -21,42 +25,92 @@
     <div class="requests-container">
 
 
-        <!-- PAGE HEADER -->
+        <!-- =========================================
+             PAGE HEADER
+             ========================================= -->
 
         <div class="page-header">
 
             <div class="page-title">
 
                 <div class="small-title">
-                    MAINTENANCE MANAGEMENT
+
+                    @if (User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>TECHNICIAN WORKSPACE</text>
+                    }
+
+                    @if (!User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>MAINTENANCE MANAGEMENT</text>
+                    }
+
                 </div>
 
+
                 <h1>
-                    Maintenance Requests
+
+                    @if (User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>Available Requests</text>
+                    }
+
+                    @if (!User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>Maintenance Requests</text>
+                    }
+
                 </h1>
 
+
                 <p>
-                    View and manage all submitted maintenance requests.
+
+                    @if (User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>
+                            Select an approved maintenance request to start working on it.
+                        </text>
+                    }
+
+                    @if (!User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>
+                            View and manage submitted maintenance requests.
+                        </text>
+                    }
+
                 </p>
 
             </div>
 
 
-            <a asp-controller="MaintenanceRequests"
-               asp-action="Create"
-               class="new-request">
+            <!-- NEW REQUEST - REQUESTER ONLY -->
+            @if (User.IsInRole("Requester"))
+            {
+                <a asp-controller="MaintenanceRequests"
+                   asp-action="Create"
+                   class="new-request">
 
-                New Request
-                <span>＋</span>
+                    New Request
 
-            </a>
+                    <span>
+                        ＋
+                    </span>
+
+                </a>
+            }
 
         </div>
 
 
-        <!-- STATISTICS -->
+        <!-- =========================================
+             STATISTICS
+             ========================================= -->
 
         <div class="stats">
+
+
+            <!-- TOTAL / AVAILABLE -->
 
             <div class="stat-card">
 
@@ -66,7 +120,19 @@
 
                 <div class="stat-info">
 
-                    <p>Total Requests</p>
+                    <p>
+
+                        @if (User.IsInRole("MaintenanceStaff"))
+                        {
+                            <text>Available Requests</text>
+                        }
+
+                        @if (!User.IsInRole("MaintenanceStaff"))
+                        {
+                            <text>Total Requests</text>
+                        }
+
+                    </p>
 
                     <h2>
                         @totalRequests
@@ -77,6 +143,8 @@
             </div>
 
 
+            <!-- PENDING / APPROVED -->
+
             <div class="stat-card">
 
                 <div class="stat-icon">
@@ -85,16 +153,40 @@
 
                 <div class="stat-info">
 
-                    <p>Pending</p>
+                    <p>
+
+                        @if (User.IsInRole("MaintenanceStaff"))
+                        {
+                            <text>Approved</text>
+                        }
+
+                        @if (!User.IsInRole("MaintenanceStaff"))
+                        {
+                            <text>Pending</text>
+                        }
+
+                    </p>
 
                     <h2>
-                        @pendingRequests
+
+                        @if (User.IsInRole("MaintenanceStaff"))
+                        {
+                            @approvedRequests
+                        }
+
+                        @if (!User.IsInRole("MaintenanceStaff"))
+                        {
+                            @pendingRequests
+                        }
+
                     </h2>
 
                 </div>
 
             </div>
 
+
+            <!-- COMPLETED -->
 
             <div class="stat-card">
 
@@ -104,7 +196,9 @@
 
                 <div class="stat-info">
 
-                    <p>Completed</p>
+                    <p>
+                        Completed
+                    </p>
 
                     <h2>
                         @completedRequests
@@ -117,18 +211,45 @@
         </div>
 
 
-        <!-- REQUESTS LIST -->
+        <!-- =========================================
+             REQUESTS LIST
+             ========================================= -->
 
         <div class="requests-card">
 
             <div class="card-header">
 
                 <h2>
-                    Requests List
+
+                    @if (User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>Available Requests</text>
+                    }
+
+                    @if (!User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>Requests List</text>
+                    }
+
                 </h2>
 
+
                 <p>
-                    All maintenance requests registered in the system.
+
+                    @if (User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>
+                            Approved requests that have not been assigned to a technician yet.
+                        </text>
+                    }
+
+                    @if (!User.IsInRole("MaintenanceStaff"))
+                    {
+                        <text>
+                            All maintenance requests registered in the system.
+                        </text>
+                    }
+
                 </p>
 
             </div>
@@ -183,24 +304,35 @@
                             {
                                 <tr>
 
+                                    <!-- REQUEST ID -->
+
                                     <td>
                                         #@item.RequestId
                                     </td>
 
+
+                                    <!-- USER -->
+
                                     <td>
-                                        #@item.UserId
+                                        @item.UserId
                                     </td>
 
+
+                                    <!-- DEVICE -->
 
                                     <td>
                                         @(item.Device?.DeviceName ?? "Unknown Device")
                                     </td>
 
 
+                                    <!-- DESCRIPTION -->
+
                                     <td>
                                         @item.RequestDescription
                                     </td>
 
+
+                                    <!-- STATUS -->
 
                                     <td>
 
@@ -211,18 +343,54 @@
                                     </td>
 
 
+                                    <!-- DATE -->
+
                                     <td>
                                         @item.RequestDate.ToString("dd/MM/yyyy")
                                     </td>
 
 
+                                    <!-- ACTIONS -->
+
                                     <td>
 
-                                        @if (item.RequestStatus != null &&
-                                             item.RequestStatus.ToLower() == "pending")
+
+                                        <!-- =================================
+                                             MAINTENANCE STAFF
+                                             ========================================= -->
+                                        @if (User.IsInRole("MaintenanceStaff"))
+                                        {
+                                            <form asp-controller="MaintenanceRequests"
+                                                  asp-action="TakeRequest"
+                                                  method="post">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="requestid"
+                                                       value="@item.RequestId" />
+
+                                                <button type="submit"
+                                                        class="approve-btn">
+
+                                                    Take Request
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        <!-- =================================
+                                             DEPARTMENT HEAD - PENDING
+                                             ========================================= -->
+                                        @if (
+                                                                                    User.IsInRole("DepartmentHead") &&
+                                                                                    item.RequestStatus != null &&
+                                                                                    item.RequestStatus.ToLower() == "pending"
+                                                                                )
                                         {
                                             <div class="actions">
-
 
                                                 <!-- APPROVE -->
 
@@ -269,10 +437,35 @@
 
                                             </div>
                                         }
-                                        else
+
+
+                                        <!-- =================================
+                                             DEPARTMENT HEAD - PROCESSED
+                                             ========================================= -->
+                                        @if (
+                                                                                    User.IsInRole("DepartmentHead") &&
+                                                                                    (
+                                                                                        item.RequestStatus == null ||
+                                                                                        item.RequestStatus.ToLower() != "pending"
+                                                                                    )
+                                                                                )
                                         {
                                             <span class="processed-text">
-                                                Processed
+                                                @(item.RequestStatus ?? "Processed")
+                                            </span>
+                                        }
+
+
+                                        <!-- =================================
+                                             REQUESTER / ADMIN
+                                             ========================================= -->
+                                        @if (
+                                                                                    !User.IsInRole("MaintenanceStaff") &&
+                                                                                    !User.IsInRole("DepartmentHead")
+                                                                                )
+                                        {
+                                            <span class="processed-text">
+                                                @(item.RequestStatus ?? "Processed")
                                             </span>
                                         }
 
@@ -295,13 +488,30 @@
                         🛠
                     </div>
 
-                    <h3>
-                        No maintenance requests yet
-                    </h3>
 
-                    <p>
-                        New maintenance requests will appear here.
-                    </p>
+                    @if (User.IsInRole("MaintenanceStaff"))
+                    {
+                        <h3>
+                            No available requests
+                        </h3>
+
+                        <p>
+                            All approved maintenance requests have been assigned.
+                            New approved requests will appear here automatically.
+                        </p>
+                    }
+
+
+                    @if (!User.IsInRole("MaintenanceStaff"))
+                    {
+                        <h3>
+                            No maintenance requests yet
+                        </h3>
+
+                        <p>
+                            New maintenance requests will appear here.
+                        </p>
+                    }
 
                 </div>
             }

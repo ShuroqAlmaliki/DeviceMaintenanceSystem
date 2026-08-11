@@ -1,0 +1,336 @@
+﻿@model IEnumerable<DeviceMaintenanceSystem.Models.MaintenanceRequest>
+
+@{
+    ViewData["Title"] = "My Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var activeRequests =
+        Model?
+            .Where(x =>
+                x.RequestStatus != null &&
+                x.RequestStatus.ToLower() == "in progress")
+            .OrderByDescending(x => x.AssignedDate)
+            .ToList()
+        ?? new List<DeviceMaintenanceSystem.Models.MaintenanceRequest>();
+
+    var totalActiveRequests =
+        activeRequests.Count;
+
+    var assignedTodayRequests =
+        activeRequests.Count(x =>
+            x.AssignedDate.HasValue &&
+            x.AssignedDate.Value.Date == DateTime.Today);
+}
+
+
+<div class="requests-page">
+
+    <div class="requests-container">
+
+
+        <!-- =========================================
+             PAGE HEADER
+             ========================================= -->
+
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <div class="small-title">
+                    TECHNICIAN WORKSPACE
+                </div>
+
+                <h1>
+                    My Requests
+                </h1>
+
+                <p>
+                    Maintenance requests currently assigned to you.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             STATISTICS
+             ========================================= -->
+
+        <div class="stats">
+
+
+            <!-- ACTIVE REQUESTS -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📋
+                </div>
+
+                <div class="stat-info">
+
+                    <p>
+                        Active Requests
+                    </p>
+
+                    <h2>
+                        @totalActiveRequests
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- IN PROGRESS -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <div class="stat-info">
+
+                    <p>
+                        In Progress
+                    </p>
+
+                    <h2>
+                        @totalActiveRequests
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNED TODAY -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+                <div class="stat-info">
+
+                    <p>
+                        Assigned Today
+                    </p>
+
+                    <h2>
+                        @assignedTodayRequests
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             ASSIGNED REQUESTS
+             ========================================= -->
+
+        <div class="requests-card">
+
+            <div class="card-header">
+
+                <h2>
+                    Current Work
+                </h2>
+
+                <p>
+                    Requests you have taken and are currently working on.
+                </p>
+
+            </div>
+
+
+            @if (activeRequests.Any())
+            {
+                <div class="table-wrapper">
+
+                    <table class="requests-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Request ID
+                                </th>
+
+                                <th>
+                                    User
+                                </th>
+
+                                <th>
+                                    Device
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Assigned Date
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in activeRequests)
+                            {
+                                <tr>
+
+
+                                    <!-- REQUEST ID -->
+
+                                    <td>
+                                        #@item.RequestId
+                                    </td>
+
+
+                                    <!-- USER -->
+
+                                    <td>
+                                        @item.UserId
+                                    </td>
+
+
+                                    <!-- DEVICE -->
+
+                                    <td>
+                                        @(item.Device?.DeviceName ?? "Unknown Device")
+                                    </td>
+
+
+                                    <!-- DESCRIPTION -->
+
+                                    <td>
+                                        @item.RequestDescription
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        <span class="status">
+                                            In Progress
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- ASSIGNED DATE -->
+
+                                    <td>
+
+                                        @if (item.AssignedDate.HasValue)
+                                        {
+                                            @item.AssignedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                        }
+
+                                        @if (!item.AssignedDate.HasValue)
+                                        {
+                                            <text>-</text>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <td>
+
+                                        <div class="actions">
+
+
+                                            <!-- ADD MAINTENANCE LOG -->
+
+                                            <a asp-controller="MaintenanceLogs"
+                                               asp-action="Create"
+                                               asp-route-requestId="@item.RequestId"
+                                               class="approve-btn">
+
+                                                Add Maintenance Log
+
+                                            </a>
+
+
+                                            <!-- COMPLETE REQUEST -->
+
+                                            <form asp-controller="MaintenanceRequests"
+                                                  asp-action="CompleteRequest"
+                                                  method="post">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="requestid"
+                                                       value="@item.RequestId" />
+
+                                                <button type="submit"
+                                                        class="approve-btn">
+
+                                                    Complete Request
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+            @if (!activeRequests.Any())
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🛠
+                    </div>
+
+                    <h3>
+                        No active requests
+                    </h3>
+
+                    <p>
+                        Take a request from Home to start working on it.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

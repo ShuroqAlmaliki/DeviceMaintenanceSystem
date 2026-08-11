@@ -24,7 +24,15 @@ namespace DeviceMaintenanceSystem.Models
 
         public string? ApprovalNote { get; set; }
 
+        // الفني الذي استلم الطلب
+        public string? AssignedTechnicianId { get; set; }
+
+        // وقت استلام الفني للطلب
+        public DateTime? AssignedDate { get; set; }
+
+
         // Navigation Properties
+
         [ForeignKey("DeviceId")]
         public Device? Device { get; set; }
 
