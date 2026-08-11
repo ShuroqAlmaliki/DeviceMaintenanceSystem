@@ -1,0 +1,183 @@
+﻿@{
+    ViewData["Title"] = "Add User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-users-page">
+
+    <div class="admin-users-container">
+
+        <!-- HEADER -->
+        <div class="admin-users-header">
+
+            <div>
+
+                <div class="admin-dashboard-label">
+                    USER MANAGEMENT
+                </div>
+
+                <h1>Add User</h1>
+
+                <p>
+                    Create a new system user and assign a role.
+                </p>
+
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Users"
+               class="admin-users-back">
+
+                ← Back to Users
+
+            </a>
+
+        </div>
+
+
+        <!-- FORM CARD -->
+        <div class="admin-users-card">
+
+            <div class="admin-users-card-header">
+
+                <div>
+
+                    <h2>Add New User</h2>
+
+                    <p>
+                        Enter the user information and select the appropriate role.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form asp-controller="Admin"
+                  asp-action="CreateUser"
+                  method="post"
+                  class="admin-user-form">
+
+                @Html.AntiForgeryToken()
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="admin-form-errors">
+
+                        <div asp-validation-summary="All"></div>
+
+                    </div>
+                }
+
+
+                <!-- USERNAME -->
+                <div class="admin-form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input id="username"
+                           name="username"
+                           type="text"
+                           placeholder="Enter username"
+                           required />
+
+                </div>
+
+
+                <!-- EMAIL -->
+                <div class="admin-form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input id="email"
+                           name="email"
+                           type="email"
+                           placeholder="Enter email"
+                           required />
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                <div class="admin-form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input id="password"
+                           name="password"
+                           type="password"
+                           placeholder="Enter password"
+                           required />
+
+                </div>
+
+
+                <!-- ROLE -->
+                <div class="admin-form-group">
+
+                    <label for="role">
+                        Role
+                    </label>
+
+                    <select id="role"
+                            name="role"
+                            required>
+
+                        <option value="">
+                            Select Role
+                        </option>
+
+                        <option value="Requester">
+                            Requester
+                        </option>
+
+                        <option value="DepartmentHead">
+                            Department Head
+                        </option>
+
+                        <option value="MaintenanceStaff">
+                            Maintenance Staff
+                        </option>
+
+                        <option value="Admin">
+                            Admin
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+                <div class="admin-form-actions">
+
+                    <a asp-controller="Admin"
+                       asp-action="Users"
+                       class="admin-users-back">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="admin-add-user-button">
+
+                        + Add User
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

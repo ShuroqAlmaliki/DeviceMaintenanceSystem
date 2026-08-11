@@ -90,5 +90,50 @@ namespace DeviceMaintenanceSystem.Controllers
 
             return View(usersWithRoles);
         }
+        // =========================================
+        // CREATE USER - GET
+        // =========================================
+
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+
+        // =========================================
+        // CREATE USER - POST
+        // =========================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateUser(
+            string username,
+            string email,
+            string password,
+            string role)
+        {
+            var user = new IdentityUser
+            {
+                UserName = username,
+                Email = email
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, role);
+
+                return RedirectToAction(nameof(Users));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View();
+        }
     }
 }
