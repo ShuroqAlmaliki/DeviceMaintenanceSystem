@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DeviceMaintenanceSystem.Data;
 using DeviceMaintenanceSystem.Models;
@@ -18,7 +17,7 @@ namespace DeviceMaintenanceSystem.Controllers
 
 
         // =========================================
-        // INDEX
+        // MAINTENANCE HISTORY
         // =========================================
 
         public async Task<IActionResult> Index()
@@ -26,7 +25,7 @@ namespace DeviceMaintenanceSystem.Controllers
             var logs =
                 await _context.MaintenanceLogs
                     .OrderByDescending(
-                        l => l.RepairStartDate
+                        l => l.RepairEndDate
                     )
                     .ToListAsync();
 
@@ -35,28 +34,73 @@ namespace DeviceMaintenanceSystem.Controllers
 
 
         // =========================================
-        // CREATE - GET
+        // FINISH MAINTENANCE - GET
         // =========================================
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(
+            int requestId)
         {
-            ViewBag.Requests =
-                new SelectList(
-                    await _context.MaintenanceRequests
-                        .OrderByDescending(
-                            r => r.RequestDate
-                        )
-                        .ToListAsync(),
-                    "RequestId",
-                    "RequestId"
-                );
+            var currentTechnician =
+                User.Identity?.Name;
 
-            return View();
+
+            if (string.IsNullOrEmpty(currentTechnician))
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
+            }
+
+
+            var maintenanceRequest =
+                await _context.MaintenanceRequests
+                    .Include(r => r.Device)
+                    .FirstOrDefaultAsync(
+                        r =>
+                            r.RequestId == requestId &&
+                            r.AssignedTechnicianId == currentTechnician &&
+                            r.RequestStatus == "In Progress"
+                    );
+
+
+            if (maintenanceRequest == null)
+            {
+                return NotFound();
+            }
+
+
+            ViewBag.RequestId =
+                maintenanceRequest.RequestId;
+
+            ViewBag.DeviceName =
+                maintenanceRequest.Device?.DeviceName
+                ?? "Unknown Device";
+
+            ViewBag.RequestDescription =
+                maintenanceRequest.RequestDescription;
+
+
+            var model =
+                new MaintenanceLog
+                {
+                    RequestId =
+                        maintenanceRequest.RequestId,
+
+                    RepairStartDate =
+                        DateTime.Now,
+
+                    RepairEndDate =
+                        DateTime.Now
+                };
+
+
+            return View(model);
         }
 
 
         // =========================================
-        // CREATE - POST
+        // FINISH MAINTENANCE - POST
         // =========================================
 
         [HttpPost]
@@ -67,73 +111,165 @@ namespace DeviceMaintenanceSystem.Controllers
             )]
             MaintenanceLog maintenanceLog)
         {
-            maintenanceLog.UserId =
-                User.Identity?.Name ??
-                string.Empty;
+            var currentTechnician =
+                User.Identity?.Name;
 
 
-            bool requestExists =
+            if (string.IsNullOrEmpty(currentTechnician))
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
+            }
+
+
+            var maintenanceRequest =
                 await _context.MaintenanceRequests
-                    .AnyAsync(
+                    .Include(r => r.Device)
+                    .FirstOrDefaultAsync(
                         r =>
                             r.RequestId ==
                             maintenanceLog.RequestId
                     );
 
-            if (!requestExists)
+
+            if (maintenanceRequest == null)
             {
-                ModelState.AddModelError(
-                    "RequestId",
-                    "Please select a valid maintenance request."
+                return NotFound();
+            }
+
+
+            // الفني لا يستطيع إنهاء طلب ليس مسندًا له
+            if (
+                maintenanceRequest.AssignedTechnicianId !=
+                currentTechnician
+            )
+            {
+                return Forbid();
+            }
+
+
+            // الطلب لازم يكون تحت العمل
+            if (
+                maintenanceRequest.RequestStatus !=
+                "In Progress"
+            )
+            {
+                return RedirectToAction(
+                    "MyRequests",
+                    "MaintenanceRequests"
                 );
             }
+
+
+            // تاريخ النهاية لا يكون قبل البداية
+            if (
+                maintenanceLog.RepairEndDate <
+                maintenanceLog.RepairStartDate
+            )
+            {
+                ModelState.AddModelError(
+                    "RepairEndDate",
+                    "Repair end date cannot be earlier than the start date."
+                );
+            }
+
+
+            maintenanceLog.UserId =
+                currentTechnician;
 
 
             ModelState.Remove("UserId");
             ModelState.Remove("MaintenanceRequest");
 
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.MaintenanceLogs.Add(
+                ViewBag.RequestId =
+                    maintenanceRequest.RequestId;
+
+                ViewBag.DeviceName =
+                    maintenanceRequest.Device?.DeviceName
+                    ?? "Unknown Device";
+
+                ViewBag.RequestDescription =
+                    maintenanceRequest.RequestDescription;
+
+                return View(
                     maintenanceLog
-                );
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(
-                    nameof(Index)
                 );
             }
 
 
-            ViewBag.Requests =
-                new SelectList(
-                    await _context.MaintenanceRequests
-                        .OrderByDescending(
-                            r => r.RequestDate
-                        )
-                        .ToListAsync(),
-                    "RequestId",
-                    "RequestId",
-                    maintenanceLog.RequestId
-                );
+            // =====================================
+            // SAVE MAINTENANCE LOG
+            // =====================================
 
-            return View(maintenanceLog);
-        }
+            _context.MaintenanceLogs.Add(
+                maintenanceLog
+            );
 
 
-        // =========================================
-        // CHECK LOG
-        // =========================================
+            // =====================================
+            // COMPLETE REQUEST
+            // =====================================
 
-        private bool MaintenanceLogExists(
-            int id)
-        {
-            return _context.MaintenanceLogs
-                .Any(
-                    m => m.LogId == id
-                );
+            maintenanceRequest.RequestStatus =
+                "Completed";
+
+
+            // =====================================
+            // UPDATE DEVICE STATUS
+            // =====================================
+
+            if (maintenanceRequest.Device != null)
+            {
+                maintenanceRequest.Device.DeviceStatus =
+                    maintenanceLog.DeviceStatusAfterRepair;
+            }
+
+
+            // =====================================
+            // CREATE NOTIFICATION
+            // =====================================
+
+            var notification =
+                new Notification
+                {
+                    UserId =
+                        maintenanceRequest.UserId,
+
+                    RequestId =
+                        maintenanceRequest.RequestId,
+
+                    NotificationDescription =
+                        "Your maintenance request has been completed.",
+
+                    NotificationDate =
+                        DateTime.Now,
+
+                    IsRead =
+                        false
+                };
+
+
+            _context.Notifications.Add(
+                notification
+            );
+
+
+            // =====================================
+            // SAVE EVERYTHING
+            // =====================================
+
+            await _context.SaveChangesAsync();
+
+
+            // بعد الانتهاء يروح للسجل
+            return RedirectToAction(
+                nameof(Index)
+            );
         }
     }
 }

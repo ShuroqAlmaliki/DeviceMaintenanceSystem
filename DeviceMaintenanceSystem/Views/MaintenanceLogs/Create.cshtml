@@ -1,13 +1,14 @@
 @model DeviceMaintenanceSystem.Models.MaintenanceLog
 
 @{
-    ViewData["Title"] = "Add Maintenance Log";
+    ViewData["Title"] = "Finish Maintenance";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="log-form-page">
 
     <div class="log-form-container">
+
 
         <!-- HEADER -->
 
@@ -16,47 +17,106 @@
             <div>
 
                 <div class="logs-label">
-                    MAINTENANCE MANAGEMENT
+                    TECHNICIAN WORKSPACE
                 </div>
 
-                <h1>Add Maintenance Log</h1>
+                <h1>
+                    Finish Maintenance
+                </h1>
 
                 <p>
-                    Record repair details for a maintenance request.
+                    Record the repair details and complete this maintenance request.
                 </p>
 
             </div>
 
 
-            <a asp-action="Index"
+            <a asp-controller="MaintenanceRequests"
+               asp-action="MyRequests"
                class="log-back-button">
 
-                ← Back to Maintenance Log
+                ← Back to My Requests
 
             </a>
 
         </div>
 
 
-        <!-- FORM CARD -->
+        <!-- REQUEST INFORMATION -->
 
         <div class="log-form-card">
 
             <div class="log-form-card-header">
 
-                <h2>Maintenance Information</h2>
+                <h2>
+                    Request Information
+                </h2>
 
                 <p>
-                    Enter the repair information below.
+                    Review the request before completing the maintenance.
                 </p>
 
             </div>
 
 
-            <form asp-action="Create"
+            <div style="padding: 25px 30px; border-bottom: 1px solid #e9eef5;">
+
+                <div class="log-form-grid">
+
+                    <div class="log-field">
+
+                        <label>
+                            Request ID
+                        </label>
+
+                        <input value="#@ViewBag.RequestId"
+                               class="log-input"
+                               readonly />
+
+                    </div>
+
+
+                    <div class="log-field">
+
+                        <label>
+                            Device
+                        </label>
+
+                        <input value="@ViewBag.DeviceName"
+                               class="log-input"
+                               readonly />
+
+                    </div>
+
+
+                    <div class="log-field log-field-full">
+
+                        <label>
+                            Reported Issue
+                        </label>
+
+                        <input value="@ViewBag.RequestDescription"
+                               class="log-input"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form asp-controller="MaintenanceLogs"
+                  asp-action="Create"
                   method="post">
 
                 @Html.AntiForgeryToken()
+
+
+                <input type="hidden"
+                       asp-for="RequestId" />
 
 
                 <div asp-validation-summary="ModelOnly"
@@ -67,32 +127,7 @@
                 <div class="log-form-grid">
 
 
-                    <!-- REQUEST -->
-
-                    <div class="log-field log-field-full">
-
-                        <label asp-for="RequestId">
-                            Maintenance Request
-                        </label>
-
-                        <select asp-for="RequestId"
-                                asp-items="ViewBag.Requests"
-                                class="log-input">
-
-                            <option value="">
-                                Select Maintenance Request
-                            </option>
-
-                        </select>
-
-                        <span asp-validation-for="RequestId"
-                              class="log-validation">
-                        </span>
-
-                    </div>
-
-
-                    <!-- DETAILS -->
+                    <!-- REPAIR DETAILS -->
 
                     <div class="log-field log-field-full">
 
@@ -192,12 +227,13 @@
                     <button type="submit"
                             class="log-primary-button">
 
-                        Save Maintenance Log
+                        Finish Maintenance
 
                     </button>
 
 
-                    <a asp-action="Index"
+                    <a asp-controller="MaintenanceRequests"
+                       asp-action="MyRequests"
                        class="log-secondary-button">
 
                         Cancel

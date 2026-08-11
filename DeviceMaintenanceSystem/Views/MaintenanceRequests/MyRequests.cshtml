@@ -13,10 +13,10 @@
             .ToList()
         ?? new List<DeviceMaintenanceSystem.Models.MaintenanceRequest>();
 
-    var totalActiveRequests =
+    var activeCount =
         activeRequests.Count;
 
-    var assignedTodayRequests =
+    var assignedToday =
         activeRequests.Count(x =>
             x.AssignedDate.HasValue &&
             x.AssignedDate.Value.Date == DateTime.Today);
@@ -28,9 +28,7 @@
     <div class="requests-container">
 
 
-        <!-- =========================================
-             PAGE HEADER
-             ========================================= -->
+        <!-- HEADER -->
 
         <div class="page-header">
 
@@ -53,14 +51,9 @@
         </div>
 
 
-        <!-- =========================================
-             STATISTICS
-             ========================================= -->
+        <!-- STATISTICS -->
 
         <div class="stats">
-
-
-            <!-- ACTIVE REQUESTS -->
 
             <div class="stat-card">
 
@@ -75,15 +68,13 @@
                     </p>
 
                     <h2>
-                        @totalActiveRequests
+                        @activeCount
                     </h2>
 
                 </div>
 
             </div>
 
-
-            <!-- IN PROGRESS -->
 
             <div class="stat-card">
 
@@ -98,15 +89,13 @@
                     </p>
 
                     <h2>
-                        @totalActiveRequests
+                        @activeCount
                     </h2>
 
                 </div>
 
             </div>
 
-
-            <!-- ASSIGNED TODAY -->
 
             <div class="stat-card">
 
@@ -121,7 +110,7 @@
                     </p>
 
                     <h2>
-                        @assignedTodayRequests
+                        @assignedToday
                     </h2>
 
                 </div>
@@ -131,9 +120,7 @@
         </div>
 
 
-        <!-- =========================================
-             ASSIGNED REQUESTS
-             ========================================= -->
+        <!-- CURRENT WORK -->
 
         <div class="requests-card">
 
@@ -144,7 +131,7 @@
                 </h2>
 
                 <p>
-                    Requests you have taken and are currently working on.
+                    Requests you are currently working on.
                 </p>
 
             </div>
@@ -160,33 +147,19 @@
 
                             <tr>
 
-                                <th>
-                                    Request ID
-                                </th>
+                                <th>Request ID</th>
 
-                                <th>
-                                    User
-                                </th>
+                                <th>User</th>
 
-                                <th>
-                                    Device
-                                </th>
+                                <th>Device</th>
 
-                                <th>
-                                    Description
-                                </th>
+                                <th>Description</th>
 
-                                <th>
-                                    Status
-                                </th>
+                                <th>Status</th>
 
-                                <th>
-                                    Assigned Date
-                                </th>
+                                <th>Assigned Date</th>
 
-                                <th>
-                                    Actions
-                                </th>
+                                <th>Action</th>
 
                             </tr>
 
@@ -199,36 +172,25 @@
                             {
                                 <tr>
 
-
-                                    <!-- REQUEST ID -->
-
                                     <td>
                                         #@item.RequestId
                                     </td>
 
-
-                                    <!-- USER -->
 
                                     <td>
                                         @item.UserId
                                     </td>
 
 
-                                    <!-- DEVICE -->
-
                                     <td>
                                         @(item.Device?.DeviceName ?? "Unknown Device")
                                     </td>
 
 
-                                    <!-- DESCRIPTION -->
-
                                     <td>
                                         @item.RequestDescription
                                     </td>
 
-
-                                    <!-- STATUS -->
 
                                     <td>
 
@@ -238,8 +200,6 @@
 
                                     </td>
 
-
-                                    <!-- ASSIGNED DATE -->
 
                                     <td>
 
@@ -256,47 +216,16 @@
                                     </td>
 
 
-                                    <!-- ACTIONS -->
-
                                     <td>
 
-                                        <div class="actions">
+                                        <a asp-controller="MaintenanceLogs"
+                                           asp-action="Create"
+                                           asp-route-requestId="@item.RequestId"
+                                           class="approve-btn">
 
+                                            Finish Maintenance
 
-                                            <!-- ADD MAINTENANCE LOG -->
-
-                                            <a asp-controller="MaintenanceLogs"
-                                               asp-action="Create"
-                                               asp-route-requestId="@item.RequestId"
-                                               class="approve-btn">
-
-                                                Add Maintenance Log
-
-                                            </a>
-
-
-                                            <!-- COMPLETE REQUEST -->
-
-                                            <form asp-controller="MaintenanceRequests"
-                                                  asp-action="CompleteRequest"
-                                                  method="post">
-
-                                                @Html.AntiForgeryToken()
-
-                                                <input type="hidden"
-                                                       name="requestid"
-                                                       value="@item.RequestId" />
-
-                                                <button type="submit"
-                                                        class="approve-btn">
-
-                                                    Complete Request
-
-                                                </button>
-
-                                            </form>
-
-                                        </div>
+                                        </a>
 
                                     </td>
 
@@ -309,6 +238,7 @@
 
                 </div>
             }
+
 
             @if (!activeRequests.Any())
             {
