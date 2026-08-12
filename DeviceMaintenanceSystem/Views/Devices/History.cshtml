@@ -1,15 +1,31 @@
 ﻿@model DeviceMaintenanceSystem.Models.Device
 
+@using DeviceMaintenanceSystem.Models
+
 @{
     ViewData["Title"] = "Maintenance Log";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var maintenanceLogs =
+        ViewBag.MaintenanceLogs as List<MaintenanceLog>
+        ?? new List<MaintenanceLog>();
+
+    var maintenanceCount =
+        ViewBag.MaintenanceCount != null
+            ? (int)ViewBag.MaintenanceCount
+            : maintenanceLogs.Count;
 }
+
 
 <div class="requests-page">
 
     <div class="requests-container">
 
-        <!-- PAGE HEADER -->
+
+        <!-- =========================================
+             PAGE HEADER
+             ========================================= -->
+
         <div class="page-header">
 
             <div class="page-title">
@@ -18,7 +34,9 @@
                     DEVICE MAINTENANCE
                 </div>
 
-                <h1>Maintenance Log</h1>
+                <h1>
+                    Maintenance Log
+                </h1>
 
                 <p>
                     View the maintenance history for this device.
@@ -29,18 +47,24 @@
         </div>
 
 
-        <!-- DEVICE INFORMATION -->
+        <!-- =========================================
+             DEVICE INFORMATION
+             ========================================= -->
+
         <div class="requests-card">
 
             <div class="card-header">
 
-                <h2>@Model.DeviceName</h2>
+                <h2>
+                    @Model.DeviceName
+                </h2>
 
                 <p>
                     Device ID: @Model.DeviceId
                 </p>
 
             </div>
+
 
             <div style="padding: 25px;">
 
@@ -49,19 +73,33 @@
                     @Model.DeviceType
                 </p>
 
+
                 <p>
                     <strong>Serial Number:</strong>
                     @Model.SerialNumber
                 </p>
 
+
                 <p>
-                    <strong>Status:</strong>
-                    @Model.DeviceStatus
+                    <strong>Current Status:</strong>
+
+                    <span class="status">
+                        @Model.DeviceStatus
+                    </span>
                 </p>
+
 
                 <p>
                     <strong>Department:</strong>
-                    @(Model.Department?.DepartmentName ?? "Not Assigned")
+
+                    @(Model.Department?.DepartmentName
+                        ?? "Not Assigned")
+                </p>
+
+
+                <p>
+                    <strong>Total Maintenance Times:</strong>
+                    @maintenanceCount
                 </p>
 
             </div>
@@ -69,22 +107,27 @@
         </div>
 
 
-        <!-- MAINTENANCE HISTORY -->
-        <div class="requests-card" style="margin-top: 25px;">
+        <!-- =========================================
+             MAINTENANCE HISTORY
+             ========================================= -->
+
+        <div class="requests-card"
+             style="margin-top: 25px;">
 
             <div class="card-header">
 
-                <h2>Maintenance History</h2>
+                <h2>
+                    Maintenance History
+                </h2>
 
                 <p>
-                    Previous maintenance requests for this device.
+                    Repair records performed on device @Model.DeviceId.
                 </p>
 
             </div>
 
 
-            @if (Model.MaintenanceRequests != null &&
-                 Model.MaintenanceRequests.Any())
+            @if (maintenanceLogs.Any())
             {
                 <div class="table-wrapper">
 
@@ -93,43 +136,82 @@
                         <thead>
 
                             <tr>
-                                <th>Request ID</th>
-                                <th>User</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Date</th>
+
+                                <th>
+                                    Log ID
+                                </th>
+
+                                <th>
+                                    Request ID
+                                </th>
+
+                                <th>
+                                    Technician
+                                </th>
+
+                                <th>
+                                    Repair Details
+                                </th>
+
+                                <th>
+                                    Start Date
+                                </th>
+
+                                <th>
+                                    End Date
+                                </th>
+
+                                <th>
+                                    Device Status
+                                </th>
+
                             </tr>
 
                         </thead>
 
+
                         <tbody>
 
-                            @foreach (var request in
-                                Model.MaintenanceRequests
-                                     .OrderByDescending(r => r.RequestDate))
+                            @foreach (var log in maintenanceLogs)
                             {
                                 <tr>
 
                                     <td>
-                                        #@request.RequestId
+                                        #@log.LogId
                                     </td>
 
-                                    <td>
-                                        @request.UserId
-                                    </td>
 
                                     <td>
-                                        @request.RequestDescription
+                                        #@log.RequestId
                                     </td>
 
+
                                     <td>
+                                        @log.UserId
+                                    </td>
+
+
+                                    <td>
+                                        @log.RepairDetails
+                                    </td>
+
+
+                                    <td>
+                                        @(log.RepairStartDate.ToString("dd/MM/yyyy HH:mm"))
+                                    </td>
+
+
+                                    <td>
+                                        @(log.RepairEndDate.ToString("dd/MM/yyyy HH:mm"))
+                                    </td>
+
+
+                                    <td>
+
                                         <span class="status">
-                                            @request.RequestStatus
+                                            @log.DeviceStatusAfterRepair
                                         </span>
-                                    </td>
 
-                                    <td>
-                                        @request.RequestDate.ToString("dd/MM/yyyy")
                                     </td>
 
                                 </tr>
@@ -141,7 +223,9 @@
 
                 </div>
             }
-            else
+
+
+            @if (!maintenanceLogs.Any())
             {
                 <div class="empty-state">
 
@@ -149,10 +233,12 @@
                         🛠
                     </div>
 
-                    <h3>No Maintenance History</h3>
+                    <h3>
+                        No Maintenance Records
+                    </h3>
 
                     <p>
-                        This device does not have any maintenance records yet.
+                        Device @Model.DeviceId does not have any maintenance records yet.
                     </p>
 
                 </div>
@@ -161,7 +247,10 @@
         </div>
 
 
-        <!-- BACK BUTTON -->
+        <!-- =========================================
+             BACK BUTTON
+             ========================================= -->
+
         <div style="margin-top: 25px;">
 
             <a asp-controller="Devices"

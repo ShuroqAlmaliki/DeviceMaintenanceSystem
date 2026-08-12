@@ -9,6 +9,10 @@ namespace DeviceMaintenanceSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        // بعد 3 مرات صيانة يتحول الجهاز إلى Damaged
+        private const int DamagedMaintenanceLimit = 3;
+
+
         public MaintenanceLogsController(
             ApplicationDbContext context)
         {
@@ -24,6 +28,7 @@ namespace DeviceMaintenanceSystem.Controllers
         {
             var logs =
                 await _context.MaintenanceLogs
+                    .Include(l => l.MaintenanceRequest)
                     .OrderByDescending(
                         l => l.RepairEndDate
                     )
@@ -73,9 +78,13 @@ namespace DeviceMaintenanceSystem.Controllers
             ViewBag.RequestId =
                 maintenanceRequest.RequestId;
 
+
+            // لو الطلب مربوط بجهاز نعرض اسمه
+            // وإذا غير مربوط نعرض الاسم الذي كتبه صاحب الطلب
             ViewBag.DeviceName =
                 maintenanceRequest.Device?.DeviceName
-                ?? "Unknown Device";
+                ?? maintenanceRequest.DeviceName;
+
 
             ViewBag.RequestDescription =
                 maintenanceRequest.RequestDescription;
@@ -140,7 +149,10 @@ namespace DeviceMaintenanceSystem.Controllers
             }
 
 
-            // الفني لا يستطيع إنهاء طلب ليس مسندًا له
+            // =====================================
+            // SECURITY CHECK
+            // =====================================
+
             if (
                 maintenanceRequest.AssignedTechnicianId !=
                 currentTechnician
@@ -150,7 +162,6 @@ namespace DeviceMaintenanceSystem.Controllers
             }
 
 
-            // الطلب لازم يكون تحت العمل
             if (
                 maintenanceRequest.RequestStatus !=
                 "In Progress"
@@ -163,7 +174,65 @@ namespace DeviceMaintenanceSystem.Controllers
             }
 
 
-            // تاريخ النهاية لا يكون قبل البداية
+            // =====================================
+            // FIND THE REAL REGISTERED DEVICE
+            // =====================================
+
+            Device? device =
+                null;
+
+
+            // لو الطلب مربوط مسبقًا بجهاز
+            if (!string.IsNullOrWhiteSpace(
+                    maintenanceRequest.DeviceId))
+            {
+                device =
+                    await _context.Devices
+                        .FirstOrDefaultAsync(
+                            d =>
+                                d.DeviceId ==
+                                maintenanceRequest.DeviceId
+                        );
+            }
+
+
+            // لو صاحب الطلب كتب الاسم فقط
+            if (device == null)
+            {
+                device =
+                    await _context.Devices
+                        .FirstOrDefaultAsync(
+                            d =>
+                                d.DeviceName ==
+                                maintenanceRequest.DeviceName
+                        );
+            }
+
+
+            // ما لقينا جهاز مسجل بهذا الاسم
+            if (device == null)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "No registered device was found with this device name."
+                );
+            }
+            else
+            {
+                // هنا أهم خطوة:
+                // نربط الطلب بالـ DeviceId الحقيقي
+                maintenanceRequest.DeviceId =
+                    device.DeviceId;
+
+                maintenanceRequest.Device =
+                    device;
+            }
+
+
+            // =====================================
+            // VALIDATE DATES
+            // =====================================
+
             if (
                 maintenanceLog.RepairEndDate <
                 maintenanceLog.RepairStartDate
@@ -184,6 +253,10 @@ namespace DeviceMaintenanceSystem.Controllers
             ModelState.Remove("MaintenanceRequest");
 
 
+            // =====================================
+            // IF INVALID
+            // =====================================
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RequestId =
@@ -191,10 +264,11 @@ namespace DeviceMaintenanceSystem.Controllers
 
                 ViewBag.DeviceName =
                     maintenanceRequest.Device?.DeviceName
-                    ?? "Unknown Device";
+                    ?? maintenanceRequest.DeviceName;
 
                 ViewBag.RequestDescription =
                     maintenanceRequest.RequestDescription;
+
 
                 return View(
                     maintenanceLog
@@ -223,15 +297,15 @@ namespace DeviceMaintenanceSystem.Controllers
             // UPDATE DEVICE STATUS
             // =====================================
 
-            if (maintenanceRequest.Device != null)
+            if (device != null)
             {
-                maintenanceRequest.Device.DeviceStatus =
+                device.DeviceStatus =
                     maintenanceLog.DeviceStatusAfterRepair;
             }
 
 
             // =====================================
-            // CREATE NOTIFICATION
+            // NOTIFICATION
             // =====================================
 
             var notification =
@@ -260,13 +334,59 @@ namespace DeviceMaintenanceSystem.Controllers
 
 
             // =====================================
-            // SAVE EVERYTHING
+            // SAVE FIRST
             // =====================================
 
             await _context.SaveChangesAsync();
 
 
-            // بعد الانتهاء يروح للسجل
+            // =====================================
+            // COUNT MAINTENANCE FOR THIS DEVICE
+            // =====================================
+
+            if (device != null)
+            {
+                var maintenanceCount =
+                    await _context.MaintenanceLogs
+                        .Include(l =>
+                            l.MaintenanceRequest)
+                        .CountAsync(l =>
+                            l.MaintenanceRequest.DeviceId ==
+                            device.DeviceId
+                        );
+
+
+                // إذا تكرر الإصلاح 3 مرات أو أكثر
+                if (
+                    maintenanceCount >=
+                    DamagedMaintenanceLimit
+                )
+                {
+                    device.DeviceStatus =
+                        "Damaged";
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+
+            // =====================================
+            // GO TO DEVICE HISTORY
+            // =====================================
+
+            if (device != null)
+            {
+                return RedirectToAction(
+                    "History",
+                    "Devices",
+                    new
+                    {
+                        id = device.DeviceId
+                    }
+                );
+            }
+
+
             return RedirectToAction(
                 nameof(Index)
             );

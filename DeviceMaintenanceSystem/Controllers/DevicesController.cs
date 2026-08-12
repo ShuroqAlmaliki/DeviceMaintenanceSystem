@@ -26,9 +26,10 @@ namespace DeviceMaintenanceSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var devices = await _context.Devices
-                .Include(d => d.Department)
-                .ToListAsync();
+            var devices =
+                await _context.Devices
+                    .Include(d => d.Department)
+                    .ToListAsync();
 
             return View(devices);
         }
@@ -45,11 +46,12 @@ namespace DeviceMaintenanceSystem.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Devices
-                .Include(d => d.Department)
-                .FirstOrDefaultAsync(
-                    d => d.DeviceId == id
-                );
+            var device =
+                await _context.Devices
+                    .Include(d => d.Department)
+                    .FirstOrDefaultAsync(
+                        d => d.DeviceId == id
+                    );
 
             if (device == null)
             {
@@ -66,11 +68,12 @@ namespace DeviceMaintenanceSystem.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.DepartmentId = new SelectList(
-                _context.Departments,
-                "DepartmentId",
-                "DepartmentName"
-            );
+            ViewBag.DepartmentId =
+                new SelectList(
+                    _context.Departments,
+                    "DepartmentId",
+                    "DepartmentName"
+                );
 
             return View();
         }
@@ -88,21 +91,23 @@ namespace DeviceMaintenanceSystem.Controllers
             )]
             Device device)
         {
-            var ids = await _context.Devices
-                .Select(d => d.DeviceId)
-                .ToListAsync();
+            var ids =
+                await _context.Devices
+                    .Select(d => d.DeviceId)
+                    .ToListAsync();
 
-            int nextNumber = ids
-                .Select(id =>
-                    int.TryParse(
-                        id?.Replace("DEV-", ""),
-                        out int number
+            int nextNumber =
+                ids
+                    .Select(id =>
+                        int.TryParse(
+                            id?.Replace("DEV-", ""),
+                            out int number
+                        )
+                            ? number
+                            : 0
                     )
-                        ? number
-                        : 0
-                )
-                .DefaultIfEmpty(0)
-                .Max() + 1;
+                    .DefaultIfEmpty(0)
+                    .Max() + 1;
 
             device.DeviceId =
                 $"DEV-{nextNumber:D3}";
@@ -138,8 +143,7 @@ namespace DeviceMaintenanceSystem.Controllers
         // EDIT - GET
         // =========================================
 
-        public async Task<IActionResult> Edit(
-            string? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
@@ -227,8 +231,7 @@ namespace DeviceMaintenanceSystem.Controllers
         // DELETE - GET
         // =========================================
 
-        public async Task<IActionResult> Delete(
-            string? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
@@ -280,29 +283,66 @@ namespace DeviceMaintenanceSystem.Controllers
 
 
         // =========================================
-        // HISTORY
+        // DEVICE MAINTENANCE HISTORY
         // =========================================
 
-        public async Task<IActionResult> History(
-            string? id)
+        public async Task<IActionResult> History(string? id)
         {
-            if (id == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return NotFound();
             }
 
+
+            // نجيب الجهاز المطلوب فقط
             var device =
                 await _context.Devices
                     .Include(d => d.Department)
-                    .Include(d => d.MaintenanceRequests)
                     .FirstOrDefaultAsync(
                         d => d.DeviceId == id
                     );
+
 
             if (device == null)
             {
                 return NotFound();
             }
+
+
+            // =====================================
+            // GET THIS DEVICE MAINTENANCE LOGS ONLY
+            // =====================================
+
+            var maintenanceLogs =
+                await _context.MaintenanceLogs
+
+                    .Include(l =>
+                        l.MaintenanceRequest)
+
+                    .Where(l =>
+                        l.MaintenanceRequest != null &&
+                        l.MaintenanceRequest.DeviceId ==
+                        device.DeviceId
+                    )
+
+                    .OrderByDescending(
+                        l => l.RepairEndDate
+                    )
+
+                    .ToListAsync();
+
+
+            // =====================================
+            // SEND LOGS TO VIEW
+            // =====================================
+
+            ViewBag.MaintenanceLogs =
+                maintenanceLogs;
+
+
+            ViewBag.MaintenanceCount =
+                maintenanceLogs.Count;
+
 
             return View(device);
         }
@@ -320,12 +360,14 @@ namespace DeviceMaintenanceSystem.Controllers
                 return NotFound();
             }
 
+
             var device =
                 await _context.Devices
                     .Include(d => d.Department)
                     .FirstOrDefaultAsync(
                         d => d.DeviceId == id
                     );
+
 
             if (device == null)
             {
@@ -352,7 +394,6 @@ namespace DeviceMaintenanceSystem.Controllers
                 $"{Request.Scheme}://{Request.Host}{detailsPath}";
 
 
-            // نحفظ الرابط داخل BarcodeValue
             device.BarcodeValue =
                 detailsUrl;
 
@@ -450,8 +491,7 @@ namespace DeviceMaintenanceSystem.Controllers
         // CHECK DEVICE
         // =========================================
 
-        private bool DeviceExists(
-            string id)
+        private bool DeviceExists(string id)
         {
             return _context.Devices.Any(
                 d => d.DeviceId == id
