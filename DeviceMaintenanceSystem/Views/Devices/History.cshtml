@@ -1,0 +1,180 @@
+﻿@model DeviceMaintenanceSystem.Models.Device
+
+@{
+    ViewData["Title"] = "Maintenance Log";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="requests-page">
+
+    <div class="requests-container">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <div class="small-title">
+                    DEVICE MAINTENANCE
+                </div>
+
+                <h1>Maintenance Log</h1>
+
+                <p>
+                    View the maintenance history for this device.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- DEVICE INFORMATION -->
+        <div class="requests-card">
+
+            <div class="card-header">
+
+                <h2>@Model.DeviceName</h2>
+
+                <p>
+                    Device ID: @Model.DeviceId
+                </p>
+
+            </div>
+
+            <div style="padding: 25px;">
+
+                <p>
+                    <strong>Device Type:</strong>
+                    @Model.DeviceType
+                </p>
+
+                <p>
+                    <strong>Serial Number:</strong>
+                    @Model.SerialNumber
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    @Model.DeviceStatus
+                </p>
+
+                <p>
+                    <strong>Department:</strong>
+                    @(Model.Department?.DepartmentName ?? "Not Assigned")
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAINTENANCE HISTORY -->
+        <div class="requests-card" style="margin-top: 25px;">
+
+            <div class="card-header">
+
+                <h2>Maintenance History</h2>
+
+                <p>
+                    Previous maintenance requests for this device.
+                </p>
+
+            </div>
+
+
+            @if (Model.MaintenanceRequests != null &&
+                 Model.MaintenanceRequests.Any())
+            {
+                <div class="table-wrapper">
+
+                    <table class="requests-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Request ID</th>
+                                <th>User</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var request in
+                                Model.MaintenanceRequests
+                                     .OrderByDescending(r => r.RequestDate))
+                            {
+                                <tr>
+
+                                    <td>
+                                        #@request.RequestId
+                                    </td>
+
+                                    <td>
+                                        @request.UserId
+                                    </td>
+
+                                    <td>
+                                        @request.RequestDescription
+                                    </td>
+
+                                    <td>
+                                        <span class="status">
+                                            @request.RequestStatus
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @request.RequestDate.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🛠
+                    </div>
+
+                    <h3>No Maintenance History</h3>
+
+                    <p>
+                        This device does not have any maintenance records yet.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- BACK BUTTON -->
+        <div style="margin-top: 25px;">
+
+            <a asp-controller="Devices"
+               asp-action="Details"
+               asp-route-id="@Model.DeviceId"
+               class="new-request">
+
+                Back to Device
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

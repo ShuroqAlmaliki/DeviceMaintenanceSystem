@@ -136,12 +136,12 @@
 
             <div class="device-details-actions">
 
-                <a asp-action="Edit"
+                <a asp-controller="Devices"
+                   asp-action="History"
                    asp-route-id="@Model.DeviceId"
                    class="device-primary-button">
-                    Edit Device
+                    Maintenance Log
                 </a>
-
                 <a asp-action="PrintBarcode"
                    asp-route-id="@Model.DeviceId"
                    class="device-secondary-button">

@@ -1,54 +1,78 @@
 ﻿@model DeviceMaintenanceSystem.Models.Device
 
 @{
-    ViewData["Title"] = "Device Barcode";
+    ViewData["Title"] = "Device QR Code";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <div class="device-barcode-page">
 
     <div class="device-barcode-container">
+
+
+        <!-- =========================================
+             HEADER
+             ========================================= -->
 
         <div class="device-form-header no-print">
 
             <div>
 
                 <div class="device-page-label">
-                    DEVICE BARCODE
+                    DEVICE QR CODE
                 </div>
 
-                <h1>Print Barcode</h1>
+                <h1>
+                    Device QR Code
+                </h1>
 
                 <p>
-                    Generate and print the barcode for this device.
+                    Scan the QR code to open the device information.
                 </p>
 
             </div>
 
 
-            <a asp-action="Index"
+            <a asp-controller="Devices"
+               asp-action="Index"
                class="device-back-button">
+
                 ← Back to Devices
+
             </a>
 
         </div>
 
 
+        <!-- =========================================
+             QR CARD
+             ========================================= -->
+
         <div class="device-barcode-card">
+
+
+            <!-- DEVICE INFORMATION -->
 
             <div class="device-barcode-heading">
 
                 <div class="device-barcode-device-icon">
 
                     <svg viewBox="0 0 24 24">
+
                         <rect x="4"
                               y="5"
                               width="16"
                               height="12"
-                              rx="2"></rect>
+                              rx="2">
+                        </rect>
 
-                        <path d="M8 21h8"></path>
-                        <path d="M12 17v4"></path>
+                        <path d="M8 21h8">
+                        </path>
+
+                        <path d="M12 17v4">
+                        </path>
+
                     </svg>
 
                 </div>
@@ -56,7 +80,9 @@
 
                 <div>
 
-                    <span>Device</span>
+                    <span>
+                        Device
+                    </span>
 
                     <h2>
                         @Model.DeviceName
@@ -71,48 +97,82 @@
             </div>
 
 
+            <!-- =====================================
+                 QR CODE
+                 ===================================== -->
+
             <div class="device-barcode-preview">
 
                 <div class="device-barcode-title">
-                    DEVICE BARCODE
+                    DEVICE QR CODE
                 </div>
 
 
                 @if (ViewBag.BarcodeImage != null)
                 {
                     <img src="@ViewBag.BarcodeImage"
-                         alt="Device Barcode"
+                         alt="Device QR Code"
                          class="device-barcode-image" />
                 }
-                else
+
+
+                @if (ViewBag.BarcodeImage == null)
                 {
                     <div class="device-barcode-unavailable">
-                        Barcode image is unavailable.
+
+                        QR code image is unavailable.
+
                     </div>
                 }
 
 
                 <div class="device-barcode-value">
 
-                    @Model.BarcodeValue
+                    Scan to view device details
 
                 </div>
+
+
+                @if (ViewBag.DeviceUrl != null)
+                {
+                    <div class="device-barcode-value">
+
+                        @ViewBag.DeviceUrl
+
+                    </div>
+                }
 
             </div>
 
 
+            <!-- =====================================
+                 ACTIONS
+                 ===================================== -->
+
             <div class="device-barcode-actions no-print">
+
 
                 <button type="button"
                         onclick="window.print()"
                         class="device-primary-button">
 
-                    Print Barcode
+                    Print QR Code
 
                 </button>
 
 
-                <a asp-action="Index"
+                <a asp-controller="Devices"
+                   asp-action="Details"
+                   asp-route-id="@Model.DeviceId"
+                   class="device-secondary-button">
+
+                    View Device
+
+                </a>
+
+
+                <a asp-controller="Devices"
+                   asp-action="Index"
                    class="device-secondary-button">
 
                     Back to Devices

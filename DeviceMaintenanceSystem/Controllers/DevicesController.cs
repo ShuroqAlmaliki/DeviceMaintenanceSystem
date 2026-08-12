@@ -294,9 +294,7 @@ namespace DeviceMaintenanceSystem.Controllers
             var device =
                 await _context.Devices
                     .Include(d => d.Department)
-                    .Include(
-                        d => d.MaintenanceRequests
-                    )
+                    .Include(d => d.MaintenanceRequests)
                     .FirstOrDefaultAsync(
                         d => d.DeviceId == id
                     );
@@ -311,7 +309,7 @@ namespace DeviceMaintenanceSystem.Controllers
 
 
         // =========================================
-        // PRINT BARCODE
+        // PRINT QR CODE
         // =========================================
 
         public async Task<IActionResult> PrintBarcode(
@@ -324,37 +322,69 @@ namespace DeviceMaintenanceSystem.Controllers
 
             var device =
                 await _context.Devices
-                    .FindAsync(id);
+                    .Include(d => d.Department)
+                    .FirstOrDefaultAsync(
+                        d => d.DeviceId == id
+                    );
 
             if (device == null)
             {
                 return NotFound();
             }
 
+
+            // =====================================
+            // BUILD DEVICE DETAILS URL
+            // =====================================
+
+            var detailsPath =
+                Url.Action(
+                    "Details",
+                    "Devices",
+                    new
+                    {
+                        id = device.DeviceId
+                    }
+                );
+
+
+            var detailsUrl =
+                $"{Request.Scheme}://{Request.Host}{detailsPath}";
+
+
+            // نحفظ الرابط داخل BarcodeValue
             device.BarcodeValue =
-                $"DEV-{device.DeviceId}-{DateTime.Now:yyyyMMddHHmmss}";
+                detailsUrl;
+
 
             await _context.SaveChangesAsync();
+
+
+            // =====================================
+            // GENERATE QR CODE
+            // =====================================
 
             var writer =
                 new BarcodeWriterPixelData
                 {
                     Format =
-                        BarcodeFormat.CODE_128,
+                        BarcodeFormat.QR_CODE,
 
                     Options =
                         new EncodingOptions
                         {
-                            Height = 120,
-                            Width = 350,
-                            Margin = 10
+                            Height = 320,
+                            Width = 320,
+                            Margin = 2
                         }
                 };
 
+
             var pixelData =
                 writer.Write(
-                    device.BarcodeValue
+                    detailsUrl
                 );
+
 
             using var bitmap =
                 new Bitmap(
@@ -362,6 +392,7 @@ namespace DeviceMaintenanceSystem.Controllers
                     pixelData.Height,
                     PixelFormat.Format32bppRgb
                 );
+
 
             var bitmapData =
                 bitmap.LockBits(
@@ -375,6 +406,7 @@ namespace DeviceMaintenanceSystem.Controllers
                     bitmap.PixelFormat
                 );
 
+
             System.Runtime.InteropServices
                 .Marshal.Copy(
                     pixelData.Pixels,
@@ -383,23 +415,32 @@ namespace DeviceMaintenanceSystem.Controllers
                     pixelData.Pixels.Length
                 );
 
+
             bitmap.UnlockBits(
                 bitmapData
             );
 
+
             using var stream =
                 new MemoryStream();
+
 
             bitmap.Save(
                 stream,
                 ImageFormat.Png
             );
 
+
             ViewBag.BarcodeImage =
                 "data:image/png;base64," +
                 Convert.ToBase64String(
                     stream.ToArray()
                 );
+
+
+            ViewBag.DeviceUrl =
+                detailsUrl;
+
 
             return View(device);
         }
