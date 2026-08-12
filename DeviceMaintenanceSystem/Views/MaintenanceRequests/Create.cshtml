@@ -5,58 +5,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8" />
+<div class="create-page">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
-
-    <title>Create Maintenance Request</title>
-
-    <link rel="stylesheet"
-          href="~/css/site.css"
-          asp-append-version="true" />
-</head>
-
-<body>
-
-    <div class="create-page">
-
-        <div class="create-container">
-
-            <div class="top-bar">
-
-                <div class="university">
-
-                    <div class="tu-logo">
-                        TU
-                    </div>
-
-                    <div>
-                        <h3>Taif University</h3>
-                        <p>Technical Support Department</p>
-                    </div>
-
-                </div>
-
-                <a asp-action="Index"
-                   class="back-button">
-                    ← Back to Requests
-                </a>
-
-            </div>
+    <div class="create-container">
 
 
-            <div class="page-header">
+        <!-- =========================================
+             PAGE HEADER
+             ========================================= -->
+
+        <div class="page-header">
+
+            <div>
 
                 <div class="small-title">
                     NEW MAINTENANCE REQUEST
                 </div>
 
-                <h1>Create Request</h1>
+                <h1>
+                    Create Request
+                </h1>
 
                 <p>
                     Enter the maintenance request details below.
@@ -64,106 +33,139 @@
 
             </div>
 
+        </div>
 
-            <div class="form-card">
 
-                <div class="form-card-header">
+        <!-- =========================================
+             FORM CARD
+             ========================================= -->
 
-                    <h2>Request Information</h2>
+        <div class="form-card">
 
-                    <p>
-                        Select the device and describe the maintenance issue.
-                    </p>
+            <div class="form-card-header">
+
+                <h2>
+                    Request Information
+                </h2>
+
+                <p>
+                    Enter the device name and describe the maintenance issue.
+                </p>
+
+            </div>
+
+
+            <form asp-controller="MaintenanceRequests"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger">
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- =================================
+                         DEVICE NAME
+                         ================================= -->
+
+                    <div class="form-group full-width">
+
+                        <label asp-for="DeviceName">
+                            Device Name
+                        </label>
+
+
+                        <input asp-for="DeviceName"
+                               type="text"
+                               class="form-control"
+                               placeholder="Enter device name..." />
+
+
+                        <span asp-validation-for="DeviceName"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- =================================
+                         DESCRIPTION
+                         ================================= -->
+
+                    <div class="form-group full-width">
+
+                        <label asp-for="RequestDescription">
+                            Request Description
+                        </label>
+
+
+                        <textarea asp-for="RequestDescription"
+                                  class="form-control"
+                                  placeholder="Describe the maintenance issue..."></textarea>
+
+
+                        <span asp-validation-for="RequestDescription"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="request-note">
+
+                        Request date and status are generated automatically.
+
+                    </div>
 
                 </div>
 
 
-                <form asp-controller="MaintenanceRequests"
-                      asp-action="Create"
-                      method="post">
+                <!-- =================================
+                     ACTIONS
+                     ================================= -->
 
-                    @Html.AntiForgeryToken()
-
-                    <div asp-validation-summary="ModelOnly"
-                         class="text-danger">
-                    </div>
+                <div class="form-actions">
 
 
-                    <div class="form-grid">
+                    <button type="submit"
+                            class="create-button">
 
-                        <!-- DEVICE NAME -->
+                        Create Request
 
-                        <div class="form-group full-width">
-
-                            <label asp-for="DeviceId">
-                                Device Name
-                            </label>
-
-                            <select asp-for="DeviceId"
-                                    asp-items="ViewBag.Devices"
-                                    class="form-control">
-
-                                <option value="">
-                                    Select Device
-                                </option>
-
-                            </select>
-
-                            <span asp-validation-for="DeviceId"
-                                  class="text-danger">
-                            </span>
-
-                        </div>
+                    </button>
 
 
-                        <!-- DESCRIPTION -->
+                    <a asp-controller="Requests"
+                       asp-action="Index"
+                       class="cancel-button">
 
-                        <div class="form-group full-width">
+                        Cancel
 
-                            <label asp-for="RequestDescription">
-                                Request Description
-                            </label>
+                    </a>
 
-                            <textarea asp-for="RequestDescription"
-                                      class="form-control"
-                                      placeholder="Describe the maintenance issue..."></textarea>
+                </div>
 
-                            <span asp-validation-for="RequestDescription"
-                                  class="text-danger">
-                            </span>
-
-                        </div>
-
-
-                        <div class="request-note">
-                            Request date and request status are generated automatically.
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-actions">
-
-                        <button type="submit"
-                                class="create-button">
-                            Create Request
-                        </button>
-
-                        <a asp-action="Index"
-                           class="cancel-button">
-                            Cancel
-                        </a>
-
-                    </div>
-
-                </form>
-
-            </div>
+            </form>
 
         </div>
 
     </div>
 
-</body>
+</div>
 
-</html>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial"
+        );
+    }
+
+}

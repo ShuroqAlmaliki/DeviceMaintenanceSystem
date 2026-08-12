@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DeviceMaintenanceSystem.Data;
 using DeviceMaintenanceSystem.Models;
@@ -9,6 +8,7 @@ namespace DeviceMaintenanceSystem.Controllers
     public class MaintenanceRequestsController : Controller
     {
         private readonly ApplicationDbContext _context;
+
 
         public MaintenanceRequestsController(
             ApplicationDbContext context)
@@ -23,8 +23,8 @@ namespace DeviceMaintenanceSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // فني الدعم يشوف فقط الطلبات المعتمدة
-            // التي لم يستلمها أي فني بعد
+            // فني الدعم يشوف الطلبات المعتمدة فقط
+            // التي لم يستلمها أي فني
             if (User.IsInRole("MaintenanceStaff"))
             {
                 var availableRequests =
@@ -47,6 +47,7 @@ namespace DeviceMaintenanceSystem.Controllers
                     .OrderByDescending(r => r.RequestDate)
                     .ToListAsync();
 
+
             return View(maintenanceRequests);
         }
 
@@ -59,6 +60,7 @@ namespace DeviceMaintenanceSystem.Controllers
         {
             var currentTechnician =
                 User.Identity?.Name;
+
 
             if (string.IsNullOrEmpty(currentTechnician))
             {
@@ -79,6 +81,7 @@ namespace DeviceMaintenanceSystem.Controllers
                         r => r.AssignedDate)
                     .ToListAsync();
 
+
             return View(myRequests);
         }
 
@@ -95,6 +98,7 @@ namespace DeviceMaintenanceSystem.Controllers
             var currentTechnician =
                 User.Identity?.Name;
 
+
             if (string.IsNullOrEmpty(currentTechnician))
             {
                 return RedirectToAction(
@@ -107,8 +111,7 @@ namespace DeviceMaintenanceSystem.Controllers
             var maintenanceRequest =
                 await _context.MaintenanceRequests
                     .FirstOrDefaultAsync(
-                        r =>
-                            r.RequestId == requestid
+                        r => r.RequestId == requestid
                     );
 
 
@@ -118,7 +121,7 @@ namespace DeviceMaintenanceSystem.Controllers
             }
 
 
-            // إذا أحد سبق واستلم الطلب
+            // إذا سبق واستلم الطلب فني آخر
             if (
                 maintenanceRequest.AssignedTechnicianId != null
             )
@@ -131,8 +134,7 @@ namespace DeviceMaintenanceSystem.Controllers
 
             // فقط الطلب المعتمد يمكن استلامه
             if (
-                maintenanceRequest.RequestStatus !=
-                "Approved"
+                maintenanceRequest.RequestStatus != "Approved"
             )
             {
                 return RedirectToAction(
@@ -172,11 +174,11 @@ namespace DeviceMaintenanceSystem.Controllers
             var currentTechnician =
                 User.Identity?.Name;
 
+
             var maintenanceRequest =
                 await _context.MaintenanceRequests
                     .FirstOrDefaultAsync(
-                        r =>
-                            r.RequestId == requestid
+                        r => r.RequestId == requestid
                     );
 
 
@@ -238,19 +240,8 @@ namespace DeviceMaintenanceSystem.Controllers
         // CREATE - GET
         // =========================================
 
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewBag.Devices =
-                new SelectList(
-                    await _context.Devices
-                        .OrderBy(
-                            d => d.DeviceName
-                        )
-                        .ToListAsync(),
-                    "DeviceId",
-                    "DeviceName"
-                );
-
             return View();
         }
 
@@ -263,7 +254,7 @@ namespace DeviceMaintenanceSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind(
-                "DeviceId,RequestDescription"
+                "DeviceName,RequestDescription"
             )]
             MaintenanceRequest maintenanceRequest)
         {
@@ -272,37 +263,62 @@ namespace DeviceMaintenanceSystem.Controllers
                 string.Empty;
 
 
-            bool deviceExists =
-                await _context.Devices
-                    .AnyAsync(
-                        d =>
-                            d.DeviceId ==
-                            maintenanceRequest.DeviceId
-                    );
-
-
-            if (!deviceExists)
-            {
-                ModelState.AddModelError(
-                    "DeviceId",
-                    "Please select a valid device."
-                );
-            }
-
-
             maintenanceRequest.RequestDate =
                 DateTime.Now;
+
 
             maintenanceRequest.RequestStatus =
                 "Pending";
 
 
+            // الطلب الجديد ليس مربوطًا بجهاز مسجل
+            maintenanceRequest.DeviceId =
+                null;
+
+
+            // تنظيف اسم الجهاز
+            maintenanceRequest.DeviceName =
+                maintenanceRequest.DeviceName?.Trim()
+                ?? string.Empty;
+
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.DeviceName
+                )
+            )
+            {
+                ModelState.AddModelError(
+                    "DeviceName",
+                    "Please enter the device name."
+                );
+            }
+
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.RequestDescription
+                )
+            )
+            {
+                ModelState.AddModelError(
+                    "RequestDescription",
+                    "Please describe the maintenance issue."
+                );
+            }
+
+
             ModelState.Remove("UserId");
+            ModelState.Remove("DeviceId");
             ModelState.Remove("RequestDate");
             ModelState.Remove("RequestStatus");
             ModelState.Remove("Device");
             ModelState.Remove("MaintenanceLogs");
             ModelState.Remove("Notifications");
+            ModelState.Remove("ApprovedByUserId");
+            ModelState.Remove("ApprovalNote");
+            ModelState.Remove("AssignedTechnicianId");
+            ModelState.Remove("AssignedDate");
 
 
             if (ModelState.IsValid)
@@ -311,25 +327,14 @@ namespace DeviceMaintenanceSystem.Controllers
                     maintenanceRequest
                 );
 
+
                 await _context.SaveChangesAsync();
+
 
                 return RedirectToAction(
                     nameof(Index)
                 );
             }
-
-
-            ViewBag.Devices =
-                new SelectList(
-                    await _context.Devices
-                        .OrderBy(
-                            d => d.DeviceName
-                        )
-                        .ToListAsync(),
-                    "DeviceId",
-                    "DeviceName",
-                    maintenanceRequest.DeviceId
-                );
 
 
             return View(
@@ -362,12 +367,14 @@ namespace DeviceMaintenanceSystem.Controllers
             maintenanceRequest.RequestStatus =
                 "Approved";
 
+
             maintenanceRequest.ApprovalNote =
                 string.IsNullOrWhiteSpace(
                     approvalNote
                 )
                     ? "Request approved."
                     : approvalNote;
+
 
             maintenanceRequest.ApprovedByUserId =
                 User.Identity?.Name;
@@ -431,12 +438,14 @@ namespace DeviceMaintenanceSystem.Controllers
             maintenanceRequest.RequestStatus =
                 "Rejected";
 
+
             maintenanceRequest.ApprovalNote =
                 string.IsNullOrWhiteSpace(
                     approvalNote
                 )
                     ? "Request rejected."
                     : approvalNote;
+
 
             maintenanceRequest.ApprovedByUserId =
                 User.Identity?.Name;

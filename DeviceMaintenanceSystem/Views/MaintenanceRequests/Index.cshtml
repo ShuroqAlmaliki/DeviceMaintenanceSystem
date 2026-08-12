@@ -289,9 +289,16 @@
                                     Date
                                 </th>
 
-                                <th>
-                                    Actions
-                                </th>
+
+                                @if (
+                                    User.IsInRole("MaintenanceStaff") ||
+                                    User.IsInRole("DepartmentHead")
+                                )
+                                {
+                                    <th>
+                                        Actions
+                                    </th>
+                                }
 
                             </tr>
 
@@ -303,6 +310,7 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
+
 
                                     <!-- REQUEST ID -->
 
@@ -318,10 +326,31 @@
                                     </td>
 
 
-                                    <!-- DEVICE -->
+                                    <!-- DEVICE NAME -->
 
                                     <td>
-                                        @(item.Device?.DeviceName ?? "Unknown Device")
+
+                                        @if (!string.IsNullOrWhiteSpace(item.DeviceName))
+                                        {
+                                            @item.DeviceName
+                                        }
+
+                                        @if (
+                                            string.IsNullOrWhiteSpace(item.DeviceName) &&
+                                            item.Device != null
+                                        )
+                                        {
+                                            @item.Device.DeviceName
+                                        }
+
+                                        @if (
+                                            string.IsNullOrWhiteSpace(item.DeviceName) &&
+                                            item.Device == null
+                                        )
+                                        {
+                                            <text>Unknown Device</text>
+                                        }
+
                                     </td>
 
 
@@ -350,52 +379,22 @@
                                     </td>
 
 
-                                    <!-- ACTIONS -->
-
-                                    <td>
-
-
-                                        <!-- =================================
-                                             MAINTENANCE STAFF
-                                             ========================================= -->
-                                        @if (User.IsInRole("MaintenanceStaff"))
-                                        {
-                                            <form asp-controller="MaintenanceRequests"
-                                                  asp-action="TakeRequest"
-                                                  method="post">
-
-                                                @Html.AntiForgeryToken()
-
-                                                <input type="hidden"
-                                                       name="requestid"
-                                                       value="@item.RequestId" />
-
-                                                <button type="submit"
-                                                        class="approve-btn">
-
-                                                    Take Request
-
-                                                </button>
-
-                                            </form>
-                                        }
+                                    <!-- =========================================
+                                         ACTIONS - TECHNICIAN / DEPARTMENT HEAD
+                                         ========================================= -->
+                                    @if (
+                                                                            User.IsInRole("MaintenanceStaff") ||
+                                                                            User.IsInRole("DepartmentHead")
+                                                                        )
+                                    {
+                                        <td>
 
 
-                                        <!-- =================================
-                                             DEPARTMENT HEAD - PENDING
-                                             ========================================= -->
-                                        @if (
-                                                                                    User.IsInRole("DepartmentHead") &&
-                                                                                    item.RequestStatus != null &&
-                                                                                    item.RequestStatus.ToLower() == "pending"
-                                                                                )
-                                        {
-                                            <div class="actions">
-
-                                                <!-- APPROVE -->
-
+                                            <!-- MAINTENANCE STAFF -->
+                                            @if (User.IsInRole("MaintenanceStaff"))
+                                            {
                                                 <form asp-controller="MaintenanceRequests"
-                                                      asp-action="Approve"
+                                                      asp-action="TakeRequest"
                                                       method="post">
 
                                                     @Html.AntiForgeryToken()
@@ -407,69 +406,89 @@
                                                     <button type="submit"
                                                             class="approve-btn">
 
-                                                        Approve
+                                                        Take Request
 
                                                     </button>
 
                                                 </form>
+                                            }
 
 
-                                                <!-- REJECT -->
-
-                                                <form asp-controller="MaintenanceRequests"
-                                                      asp-action="Reject"
-                                                      method="post">
-
-                                                    @Html.AntiForgeryToken()
-
-                                                    <input type="hidden"
-                                                           name="requestid"
-                                                           value="@item.RequestId" />
-
-                                                    <button type="submit"
-                                                            class="reject-btn">
-
-                                                        Reject
-
-                                                    </button>
-
-                                                </form>
-
-                                            </div>
-                                        }
+                                            <!-- DEPARTMENT HEAD - PENDING -->
+                                            @if (
+                                                                                            User.IsInRole("DepartmentHead") &&
+                                                                                            item.RequestStatus != null &&
+                                                                                            item.RequestStatus.ToLower() == "pending"
+                                                                                        )
+                                            {
+                                                <div class="actions">
 
 
-                                        <!-- =================================
-                                             DEPARTMENT HEAD - PROCESSED
-                                             ========================================= -->
-                                        @if (
-                                                                                    User.IsInRole("DepartmentHead") &&
-                                                                                    (
-                                                                                        item.RequestStatus == null ||
-                                                                                        item.RequestStatus.ToLower() != "pending"
-                                                                                    )
-                                                                                )
-                                        {
-                                            <span class="processed-text">
-                                                @(item.RequestStatus ?? "Processed")
-                                            </span>
-                                        }
+                                                    <!-- APPROVE -->
+
+                                                    <form asp-controller="MaintenanceRequests"
+                                                          asp-action="Approve"
+                                                          method="post">
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <input type="hidden"
+                                                               name="requestid"
+                                                               value="@item.RequestId" />
+
+                                                        <button type="submit"
+                                                                class="approve-btn">
+
+                                                            Approve
+
+                                                        </button>
+
+                                                    </form>
 
 
-                                        <!-- =================================
-                                             REQUESTER / ADMIN
-                                             ========================================= -->
-                                        @if (
-                                                                                    !User.IsInRole("MaintenanceStaff") &&
-                                                                                    !User.IsInRole("DepartmentHead")
-                                                                                )
-                                        {
-                                            <span class="processed-text">
-                                                @(item.RequestStatus ?? "Processed")
-                                            </span>
-                                        }
+                                                    <!-- REJECT -->
 
-                                    </td>
+                                                    <form asp-controller="MaintenanceRequests"
+                                                          asp-action="Reject"
+                                                          method="post">
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <input type="hidden"
+                                                               name="requestid"
+                                                               value="@item.RequestId" />
+
+                                                        <button type="submit"
+                                                                class="reject-btn">
+
+                                                            Reject
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+                                            }
+
+
+                                            <!-- DEPARTMENT HEAD - PROCESSED -->
+                                            @if (
+                                                                                            User.IsInRole("DepartmentHead") &&
+                                                                                            (
+                                                                                                item.RequestStatus == null ||
+                                                                                                item.RequestStatus.ToLower() != "pending"
+                                                                                            )
+                                                                                        )
+                                            {
+                                                <span class="processed-text">
+
+                                                    @(item.RequestStatus ?? "Processed")
+
+                                                </span>
+                                            }
+
+                                        </td>
+                                    }
 
                                 </tr>
                             }
@@ -480,7 +499,9 @@
 
                 </div>
             }
-            else
+
+
+            @if (Model == null || !Model.Any())
             {
                 <div class="empty-state">
 
