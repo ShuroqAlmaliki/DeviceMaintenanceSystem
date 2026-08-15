@@ -3,60 +3,87 @@
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
 }
 
+
 <div class="nova-login">
 
+
     <div class="nova-glow nova-glow-one"></div>
+
     <div class="nova-glow nova-glow-two"></div>
+
 
     <!-- =========================================
          LEFT SIDE
          ========================================= -->
+
     <section class="nova-intro">
 
-        <!-- University -->
+
+        <!-- UNIVERSITY BRAND -->
+
         <div class="nova-brand">
 
-            <div class="nova-brand-mark">TU</div>
+            <div class="nova-brand-mark">
+
+                <img src="~/images/img22.png"
+                     alt="Taif University"
+                     class="nova-brand-logo" />
+
+            </div>
+
 
             <div>
-                <strong>Taif University</strong>
-                <span>Technical Support Department</span>
+
+                <strong>
+                    Taif University
+                </strong>
+
+                <span>
+                    Technical Support Department
+                </span>
+
             </div>
 
         </div>
 
 
-        <!-- Platform Information -->
+        <!-- PLATFORM INFORMATION -->
+
         <div class="nova-welcome nova-welcome-simple">
 
+
             <span class="nova-label">
-                SMART MAINTENANCE PLATFORM
+                DEVICE MAINTENANCE PLATFORM
             </span>
 
 
-            <!-- Maintenance Illustration -->
+            <!-- MAINTENANCE ILLUSTRATION -->
+
             <div class="nova-maintenance-visual">
 
                 <div class="nova-visual-glow"></div>
+
 
                 <svg class="nova-maintenance-svg"
                      viewBox="0 0 620 400"
                      xmlns="http://www.w3.org/2000/svg">
 
-                    <!-- Background Circle -->
+
                     <circle cx="310"
                             cy="190"
                             r="150"
                             class="visual-circle" />
 
 
-                    <!-- Monitor -->
+                    <!-- MONITOR -->
+
                     <rect x="160"
                           y="80"
                           width="300"
                           height="205"
                           rx="22"
                           class="visual-monitor" />
+
 
                     <rect x="180"
                           y="100"
@@ -66,16 +93,19 @@
                           class="visual-screen" />
 
 
-                    <!-- Screen Header -->
+                    <!-- SCREEN HEADER -->
+
                     <circle cx="205"
                             cy="122"
                             r="5"
                             class="visual-dot" />
 
+
                     <circle cx="222"
                             cy="122"
                             r="5"
                             class="visual-dot visual-dot-light" />
+
 
                     <circle cx="239"
                             cy="122"
@@ -83,7 +113,8 @@
                             class="visual-dot visual-dot-light" />
 
 
-                    <!-- Screen Content -->
+                    <!-- SCREEN CONTENT -->
+
                     <rect x="205"
                           y="153"
                           width="105"
@@ -91,12 +122,14 @@
                           rx="6"
                           class="visual-line" />
 
+
                     <rect x="205"
                           y="177"
                           width="185"
                           height="8"
                           rx="4"
                           class="visual-line-light" />
+
 
                     <rect x="205"
                           y="196"
@@ -106,7 +139,8 @@
                           class="visual-line-light" />
 
 
-                    <!-- Status Card -->
+                    <!-- STATUS -->
+
                     <rect x="205"
                           y="220"
                           width="105"
@@ -114,13 +148,16 @@
                           rx="8"
                           class="visual-status" />
 
+
                     <path d="M222 233 L228 239 L240 226"
                           class="visual-check" />
 
 
-                    <!-- Monitor Stand -->
+                    <!-- STAND -->
+
                     <path d="M285 285 L275 325 H345 L335 285"
                           class="visual-stand" />
+
 
                     <rect x="245"
                           y="323"
@@ -130,7 +167,8 @@
                           class="visual-stand-base" />
 
 
-                    <!-- Gear -->
+                    <!-- GEAR -->
+
                     <g class="visual-gear">
 
                         <circle cx="440"
@@ -138,10 +176,12 @@
                                 r="55"
                                 class="gear-outer" />
 
+
                         <circle cx="440"
                                 cy="245"
                                 r="23"
                                 class="gear-inner" />
+
 
                         <path d="M440 177 V194
                         M440 296 V313
@@ -156,7 +196,8 @@
                     </g>
 
 
-                    <!-- Tool -->
+                    <!-- TOOL -->
+
                     <g class="visual-tool">
 
                         <path d="M150 205
@@ -172,6 +213,7 @@
                         Z"
                               class="tool-shape" />
 
+
                         <circle cx="118"
                                 cy="249"
                                 r="8"
@@ -184,17 +226,21 @@
             </div>
 
 
-            <!-- Platform Description -->
             <p class="nova-platform-description">
-                Manage devices, submit maintenance requests,
-                and follow technical support updates in one secure place.
+
+                Manage university devices, submit maintenance requests,
+                track technical support, and maintain accurate device
+                maintenance records in one secure platform.
+
             </p>
 
         </div>
 
 
         <p class="nova-copyright">
+
             © 2026 Taif University
+
         </p>
 
     </section>
@@ -203,9 +249,12 @@
     <!-- =========================================
          LOGIN SIDE
          ========================================= -->
+
     <section class="nova-form-side">
 
+
         <div class="nova-card">
+
 
             <div class="nova-card-icon">
 
@@ -228,9 +277,13 @@
 
             <div class="nova-card-heading">
 
-                <span>Welcome back</span>
+                <span>
+                    Welcome back
+                </span>
 
-                <h2>Sign in to continue</h2>
+                <h2>
+                    Sign in to continue
+                </h2>
 
                 <p>
                     Enter your university account information.
@@ -249,17 +302,21 @@
                 @if (ViewBag.ErrorMessage != null)
                 {
                     <div class="nova-error-message">
+
                         @ViewBag.ErrorMessage
+
                     </div>
                 }
 
 
-                <!-- User Name -->
+                <!-- USERNAME -->
+
                 <div class="nova-field">
 
                     <label for="username">
                         User Name
                     </label>
+
 
                     <div class="nova-input">
 
@@ -286,8 +343,10 @@
                 </div>
 
 
-                <!-- Password -->
+                <!-- PASSWORD -->
+
                 <div class="nova-field">
+
 
                     <div class="nova-label-row">
 
@@ -347,7 +406,8 @@
                 </div>
 
 
-                <!-- Remember Me -->
+                <!-- REMEMBER -->
+
                 <label class="nova-remember">
 
                     <input type="checkbox"
@@ -361,7 +421,8 @@
                 </label>
 
 
-                <!-- Sign In -->
+                <!-- SIGN IN -->
+
                 <button class="nova-signin"
                         type="submit">
 
@@ -370,7 +431,9 @@
                     </span>
 
                     <svg viewBox="0 0 24 24">
+
                         <path d="M5 12h14M14 7l5 5-5 5" />
+
                     </svg>
 
                 </button>
@@ -379,20 +442,25 @@
 
 
             <div class="nova-divider">
-                <span>or continue with</span>
+
+                <span>
+                    Taif University
+                </span>
+
             </div>
 
 
-            <button class="nova-tu-button"
-                    type="button">
+            <div class="nova-university-signature">
 
-                <span class="nova-mini-logo">
-                    TU
+                <img src="~/images/img22.png"
+                     alt="Taif University"
+                     class="nova-small-university-logo" />
+
+                <span>
+                    Device Maintenance System
                 </span>
 
-                Sign in with TU Account
-
-            </button>
+            </div>
 
 
             <p class="nova-help">

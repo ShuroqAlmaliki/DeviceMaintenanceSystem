@@ -17,16 +17,17 @@
     </title>
 
     <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
           href="~/css/site.css"
           asp-append-version="true" />
 
 </head>
 
-
 <body>
 
     <div class="app-layout">
-
 
         <!-- =========================================
              SIDEBAR
@@ -34,17 +35,19 @@
 
         <aside class="app-sidebar">
 
-
             <!-- =====================================
-                 BRAND
+                 UNIVERSITY BRAND
                  ===================================== -->
 
             <div class="sidebar-brand">
 
                 <div class="sidebar-logo">
-                    TU
-                </div>
 
+                    <img src="~/images/img22.png"
+                         alt="Taif University Logo"
+                         class="sidebar-logo-image" />
+
+                </div>
 
                 <div class="sidebar-brand-text">
 
@@ -60,13 +63,11 @@
 
             </div>
 
-
             <!-- =====================================
                  NAVIGATION
                  ===================================== -->
 
             <nav class="sidebar-navigation">
-
 
                 <!-- =================================
                      REQUESTER
@@ -98,7 +99,6 @@
 
                     </a>
 
-
                     <!-- NEW REQUEST -->
 
                     <a asp-controller="MaintenanceRequests"
@@ -122,7 +122,6 @@
                         </span>
 
                     </a>
-
 
                     <!-- MY REQUESTS -->
 
@@ -157,7 +156,6 @@
                     </a>
                 }
 
-
                 <!-- =================================
                      DEPARTMENT HEAD
                      ================================= -->
@@ -187,7 +185,6 @@
                         </span>
 
                     </a>
-
 
                     <!-- MAINTENANCE REQUESTS -->
 
@@ -220,14 +217,13 @@
                     </a>
                 }
 
-
                 <!-- =================================
                      MAINTENANCE STAFF
                      ================================= -->
                 @if (User.IsInRole("MaintenanceStaff"))
                 {
 
-                    <!-- HOME / AVAILABLE REQUESTS -->
+                    <!-- HOME -->
 
                     <a asp-controller="MaintenanceRequests"
                        asp-action="Index"
@@ -250,7 +246,6 @@
                         </span>
 
                     </a>
-
 
                     <!-- MY REQUESTS -->
 
@@ -284,7 +279,6 @@
 
                     </a>
 
-
                     <!-- DEVICES -->
 
                     <a asp-controller="Devices"
@@ -315,7 +309,6 @@
 
                     </a>
 
-
                     <!-- MAINTENANCE HISTORY -->
 
                     <a asp-controller="MaintenanceLogs"
@@ -344,7 +337,6 @@
 
                     </a>
                 }
-
 
                 <!-- =================================
                      ADMIN
@@ -376,7 +368,6 @@
 
                     </a>
 
-
                     <!-- USERS -->
 
                     <a asp-controller="Admin"
@@ -404,14 +395,10 @@
                         </span>
 
                         <span>
-                               User Management
+                            User Management
                         </span>
 
                     </a>
-
-
-                  
-
 
                     <!-- DEPARTMENTS -->
 
@@ -442,45 +429,36 @@
                         </span>
 
                     </a>
-
-
-                  
                 }
 
             </nav>
 
         </aside>
 
-
         <!-- =========================================
-             MAIN AREA
+             MAIN
              ========================================= -->
 
         <div class="app-main">
 
-
-            <!-- =====================================
-                 HEADER
-                 ===================================== -->
+            <!-- HEADER -->
 
             <header class="app-header">
 
                 <div class="header-actions">
 
-
-                    <!-- USER -->
                     @if (User.Identity?.IsAuthenticated == true)
                     {
+
                         <div class="header-user">
 
                             <div class="header-avatar">
 
                                 @((User.Identity.Name ?? "U")
-                                    .Substring(0, 1)
-                                    .ToUpper())
+                                                                    .Substring(0, 1)
+                                                                    .ToUpper())
 
                             </div>
-
 
                             <div class="header-user-info">
 
@@ -496,7 +474,6 @@
 
                         </div>
                     }
-
 
                     <!-- NOTIFICATIONS -->
 
@@ -515,7 +492,6 @@
                         </svg>
 
                     </a>
-
 
                     <!-- SIGN OUT -->
 
@@ -552,10 +528,7 @@
 
             </header>
 
-
-            <!-- =====================================
-                 PAGE CONTENT
-                 ===================================== -->
+            <!-- CONTENT -->
 
             <main class="app-content">
 
@@ -563,10 +536,7 @@
 
             </main>
 
-
-            <!-- =====================================
-                 FOOTER
-                 ===================================== -->
+            <!-- FOOTER -->
 
             <footer class="app-footer">
 
@@ -579,6 +549,8 @@
 
     </div>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     @await RenderSectionAsync(
         "Scripts",
