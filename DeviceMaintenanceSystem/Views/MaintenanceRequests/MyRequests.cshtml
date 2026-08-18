@@ -8,13 +8,23 @@
         Model?
             .Where(x =>
                 x.RequestStatus != null &&
-                x.RequestStatus.ToLower() == "in progress")
+                (
+                    x.RequestStatus.ToLower() == "received" ||
+                    x.RequestStatus.ToLower() == "in progress"
+                ))
             .OrderByDescending(x => x.AssignedDate)
             .ToList()
         ?? new List<DeviceMaintenanceSystem.Models.MaintenanceRequest>();
 
-    var activeCount =
-        activeRequests.Count;
+    var receivedCount =
+        activeRequests.Count(x =>
+            x.RequestStatus != null &&
+            x.RequestStatus.ToLower() == "received");
+
+    var inProgressCount =
+        activeRequests.Count(x =>
+            x.RequestStatus != null &&
+            x.RequestStatus.ToLower() == "in progress");
 
     var assignedToday =
         activeRequests.Count(x =>
@@ -26,7 +36,6 @@
 <div class="requests-page">
 
     <div class="requests-container">
-
 
         <!-- HEADER -->
 
@@ -58,17 +67,17 @@
             <div class="stat-card">
 
                 <div class="stat-icon">
-                    📋
+                    📥
                 </div>
 
                 <div class="stat-info">
 
                     <p>
-                        Active Requests
+                        Received
                     </p>
 
                     <h2>
-                        @activeCount
+                        @receivedCount
                     </h2>
 
                 </div>
@@ -79,7 +88,7 @@
             <div class="stat-card">
 
                 <div class="stat-icon">
-                    ⏳
+                    🛠
                 </div>
 
                 <div class="stat-info">
@@ -89,7 +98,7 @@
                     </p>
 
                     <h2>
-                        @activeCount
+                        @inProgressCount
                     </h2>
 
                 </div>
@@ -183,7 +192,7 @@
 
 
                                     <td>
-                                        @(item.Device?.DeviceName ?? "Unknown Device")
+                                        @(item.Device?.DeviceName ?? item.DeviceName ?? "Unknown Device")
                                     </td>
 
 
@@ -194,9 +203,19 @@
 
                                     <td>
 
-                                        <span class="status">
-                                            In Progress
-                                        </span>
+                                        @if (item.RequestStatus == "Received")
+                                        {
+                                            <span class="status">
+                                                Received
+                                            </span>
+                                        }
+
+                                        @if (item.RequestStatus == "In Progress")
+                                        {
+                                            <span class="status">
+                                                In Progress
+                                            </span>
+                                        }
 
                                     </td>
 
@@ -207,8 +226,7 @@
                                         {
                                             @item.AssignedDate.Value.ToString("dd/MM/yyyy HH:mm")
                                         }
-
-                                        @if (!item.AssignedDate.HasValue)
+                                        else
                                         {
                                             <text>-</text>
                                         }
@@ -218,14 +236,39 @@
 
                                     <td>
 
-                                        <a asp-controller="MaintenanceLogs"
-                                           asp-action="Create"
-                                           asp-route-requestId="@item.RequestId"
-                                           class="approve-btn">
+                                        @if (item.RequestStatus == "Received")
+                                        {
+                                            <form asp-controller="MaintenanceRequests"
+                                                  asp-action="StartMaintenance"
+                                                  method="post">
 
-                                            Finish Maintenance
+                                                @Html.AntiForgeryToken()
 
-                                        </a>
+                                                <input type="hidden"
+                                                       name="requestid"
+                                                       value="@item.RequestId" />
+
+                                                <button type="submit"
+                                                        class="approve-btn">
+
+                                                    Start Maintenance
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                        @if (item.RequestStatus == "In Progress")
+                                        {
+                                            <a asp-controller="MaintenanceLogs"
+                                               asp-action="Create"
+                                               asp-route-requestId="@item.RequestId"
+                                               class="approve-btn">
+
+                                                Finish Maintenance
+
+                                            </a>
+                                        }
 
                                     </td>
 
