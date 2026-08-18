@@ -4,15 +4,27 @@
     ViewData["Title"] = "Notifications";
 
     var totalNotifications = Model?.Count() ?? 0;
-    var unreadNotifications = Model?.Count(x => !x.IsRead) ?? 0;
-    var readNotifications = Model?.Count(x => x.IsRead) ?? 0;
+
+    var unreadIds =
+        ViewBag.UnreadNotificationIds as HashSet<int>
+        ?? new HashSet<int>();
+
+    var unreadNotifications =
+        Model?.Count(x => unreadIds.Contains(x.NotificationId)) ?? 0;
+
+    var readNotifications =
+        totalNotifications - unreadNotifications;
 }
 
 <div class="notifications-page">
     <div class="notifications-container">
 
+        <!-- PAGE HEADER -->
+
         <div class="page-header">
+
             <div class="page-title">
+
                 <div class="small-title">
                     SYSTEM NOTIFICATIONS
                 </div>
@@ -20,117 +32,263 @@
                 <h1>Notifications</h1>
 
                 <p>
-                    View your system notifications.
+                    View updates about your maintenance requests.
                 </p>
+
             </div>
+
         </div>
+
+
+        <!-- STATISTICS -->
 
         <div class="stats">
 
+            <!-- TOTAL -->
+
             <div class="stat-card">
+
                 <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+                    <svg viewBox="0 0 24 24"
+                         width="24"
+                         height="24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
                         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
                         <path d="M10 21h4" />
+
                     </svg>
+
                 </div>
 
                 <div class="stat-info">
-                    <p>Total Notifications</p>
-                    <h2>@totalNotifications</h2>
+
+                    <p>
+                        Total Notifications
+                    </p>
+
+                    <h2>
+                        @totalNotifications
+                    </h2>
+
                 </div>
+
             </div>
 
+
+            <!-- UNREAD -->
+
             <div class="stat-card">
+
                 <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <circle cx="12" cy="12" r="8" />
-                        <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
+
+                    <svg viewBox="0 0 24 24"
+                         width="24"
+                         height="24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
+                        <circle cx="12"
+                                cy="12"
+                                r="8" />
+
+                        <circle cx="12"
+                                cy="12"
+                                r="2"
+                                fill="currentColor"
+                                stroke="none" />
+
                     </svg>
+
                 </div>
 
                 <div class="stat-info">
-                    <p>Unread</p>
-                    <h2>@unreadNotifications</h2>
+
+                    <p>
+                        New
+                    </p>
+
+                    <h2>
+                        @unreadNotifications
+                    </h2>
+
                 </div>
+
             </div>
 
+
+            <!-- READ -->
+
             <div class="stat-card">
+
                 <div class="stat-icon">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+                    <svg viewBox="0 0 24 24"
+                         width="24"
+                         height="24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
                         <path d="M5 12l4 4L19 6" />
+
                     </svg>
+
                 </div>
 
                 <div class="stat-info">
-                    <p>Read</p>
-                    <h2>@readNotifications</h2>
+
+                    <p>
+                        Read
+                    </p>
+
+                    <h2>
+                        @readNotifications
+                    </h2>
+
                 </div>
+
             </div>
 
         </div>
+
+
+        <!-- NOTIFICATIONS LIST -->
 
         <div class="notifications-card">
 
             <div class="card-header">
-                <h2>Notifications List</h2>
-                <p>Your notifications registered in the system.</p>
+
+                <h2>
+                    Notifications List
+                </h2>
+
+                <p>
+                    Updates about your maintenance requests.
+                </p>
+
             </div>
+
 
             @if (Model != null && Model.Any())
             {
                 <div class="table-wrapper">
+
                     <table class="notifications-table">
+
                         <thead>
+
                             <tr>
-                                <th>Request ID</th>
-                                <th>Description</th>
-                                <th>Date</th>
-                                <th>Status</th>
+
+                                <th>
+                                    Request ID
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
                             </tr>
+
                         </thead>
 
+
                         <tbody>
+
                             @foreach (var item in Model)
                             {
+                                var wasUnread =
+                                    unreadIds.Contains(
+                                        item.NotificationId
+                                    );
+
                                 <tr>
-                                    <td>#@item.RequestId</td>
-
-                                    <td>@item.NotificationDescription</td>
-
-                                    <td>@item.NotificationDate.ToString("dd/MM/yyyy")</td>
 
                                     <td>
-                                        @if (item.IsRead)
+                                        #@item.RequestId
+                                    </td>
+
+
+                                    <td>
+                                        @item.NotificationDescription
+                                    </td>
+
+
+                                    <td>
+                                        @item.NotificationDate.ToString(
+                                            "dd/MM/yyyy HH:mm"
+                                        )
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (wasUnread)
                                         {
-                                            <span class="read-status read">Read</span>
+                                            <span class="read-status unread">
+                                                New
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="read-status unread">Unread</span>
+                                            <span class="read-status read">
+                                                Read
+                                            </span>
                                         }
+
                                     </td>
+
                                 </tr>
                             }
+
                         </tbody>
+
                     </table>
+
                 </div>
             }
             else
             {
                 <div class="empty-state">
+
                     <div class="empty-icon">
-                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+
+                        <svg viewBox="0 0 24 24"
+                             width="28"
+                             height="28"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8">
+
                             <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+
                             <path d="M10 21h4" />
+
                         </svg>
+
                     </div>
 
-                    <h3>No notifications yet</h3>
+                    <h3>
+                        No notifications yet
+                    </h3>
 
                     <p>
-                        Your system notifications will appear here automatically.
+                        Updates about your maintenance requests
+                        will appear here automatically.
                     </p>
+
                 </div>
             }
 

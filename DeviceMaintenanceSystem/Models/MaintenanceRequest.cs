@@ -45,10 +45,30 @@ namespace DeviceMaintenanceSystem.Models
         // وقت استلام الفني للطلب
         public DateTime? AssignedDate { get; set; }
 
+
+        // =========================================
+        // APPLICANT INFORMATION
+        // =========================================
+
         [Display(Name = "Phone Number")]
         [Required(ErrorMessage = "Please enter your phone number")]
         [Phone(ErrorMessage = "Invalid phone number format")]
-        public string ApplicantPhone { get; set; }
+        public string ApplicantPhone { get; set; } = string.Empty;
+
+
+        [Display(Name = "Office Number")]
+        [Required(ErrorMessage = "Please enter the office number")]
+        public string OfficeNumber { get; set; } = string.Empty;
+
+
+        [Display(Name = "Department")]
+        [Required(ErrorMessage = "Please enter the department")]
+        public string Department { get; set; } = string.Empty;
+
+
+        [Display(Name = "Building")]
+        [Required(ErrorMessage = "Please enter the building")]
+        public string Building { get; set; } = string.Empty;
 
 
         // =========================================

@@ -30,21 +30,23 @@ namespace DeviceMaintenanceSystem.Controllers
         {
             if (User.IsInRole("MaintenanceStaff"))
             {
-                var availableRequests = await _context.MaintenanceRequests
-                    .Include(r => r.Device)
-                    .Where(r =>
-                        r.RequestStatus == "Approved" &&
-                        r.AssignedTechnicianId == null)
-                    .OrderBy(r => r.RequestDate)
-                    .ToListAsync();
+                var availableRequests =
+                    await _context.MaintenanceRequests
+                        .Include(r => r.Device)
+                        .Where(r =>
+                            r.RequestStatus == "Approved" &&
+                            r.AssignedTechnicianId == null)
+                        .OrderBy(r => r.RequestDate)
+                        .ToListAsync();
 
                 return View(availableRequests);
             }
 
-            var maintenanceRequests = await _context.MaintenanceRequests
-                .Include(r => r.Device)
-                .OrderByDescending(r => r.RequestDate)
-                .ToListAsync();
+            var maintenanceRequests =
+                await _context.MaintenanceRequests
+                    .Include(r => r.Device)
+                    .OrderByDescending(r => r.RequestDate)
+                    .ToListAsync();
 
             return View(maintenanceRequests);
         }
@@ -54,54 +56,79 @@ namespace DeviceMaintenanceSystem.Controllers
         // =========================================
         public async Task<IActionResult> MyRequests()
         {
-            var currentTechnician = User.Identity?.Name;
+            var currentTechnician =
+                User.Identity?.Name;
 
             if (string.IsNullOrEmpty(currentTechnician))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
             }
 
-            var myRequests = await _context.MaintenanceRequests
-                .Include(r => r.Device)
-                .Where(r => r.AssignedTechnicianId == currentTechnician)
-                .OrderByDescending(r => r.AssignedDate)
-                .ToListAsync();
+            var myRequests =
+                await _context.MaintenanceRequests
+                    .Include(r => r.Device)
+                    .Where(r =>
+                        r.AssignedTechnicianId ==
+                        currentTechnician)
+                    .OrderByDescending(
+                        r => r.AssignedDate)
+                    .ToListAsync();
 
             return View(myRequests);
         }
 
         // =========================================
         // TAKE REQUEST
-        // الدعم الفني يستلم الطلب/الجهاز
+        // الدعم الفني يستلم الطلب / الجهاز
         // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TakeRequest(int requestid)
+        public async Task<IActionResult> TakeRequest(
+            int requestid)
         {
-            var currentTechnician = User.Identity?.Name;
+            var currentTechnician =
+                User.Identity?.Name;
 
             if (string.IsNullOrEmpty(currentTechnician))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
             }
 
-            var maintenanceRequest = await _context.MaintenanceRequests
-                .FirstOrDefaultAsync(r => r.RequestId == requestid);
+            var maintenanceRequest =
+                await _context.MaintenanceRequests
+                    .FirstOrDefaultAsync(
+                        r => r.RequestId == requestid
+                    );
 
             if (maintenanceRequest == null)
             {
                 return NotFound();
             }
 
-            if (maintenanceRequest.AssignedTechnicianId != null ||
-                maintenanceRequest.RequestStatus != "Approved")
+            if (
+                maintenanceRequest.AssignedTechnicianId != null ||
+                maintenanceRequest.RequestStatus != "Approved"
+            )
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    nameof(Index)
+                );
             }
 
-            maintenanceRequest.AssignedTechnicianId = currentTechnician;
-            maintenanceRequest.AssignedDate = DateTime.Now;
-            maintenanceRequest.RequestStatus = "Received";
+            maintenanceRequest.AssignedTechnicianId =
+                currentTechnician;
+
+            maintenanceRequest.AssignedDate =
+                DateTime.Now;
+
+            maintenanceRequest.RequestStatus =
+                "Received";
 
             AddNotification(
                 maintenanceRequest,
@@ -116,7 +143,9 @@ namespace DeviceMaintenanceSystem.Controllers
                 $"Your maintenance request #{maintenanceRequest.RequestId} has been received by Technical Support."
             );
 
-            return RedirectToAction(nameof(MyRequests));
+            return RedirectToAction(
+                nameof(MyRequests)
+            );
         }
 
         // =========================================
@@ -124,34 +153,51 @@ namespace DeviceMaintenanceSystem.Controllers
         // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartMaintenance(int requestid)
+        public async Task<IActionResult> StartMaintenance(
+            int requestid)
         {
-            var currentTechnician = User.Identity?.Name;
+            var currentTechnician =
+                User.Identity?.Name;
 
             if (string.IsNullOrEmpty(currentTechnician))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
             }
 
-            var maintenanceRequest = await _context.MaintenanceRequests
-                .FirstOrDefaultAsync(r => r.RequestId == requestid);
+            var maintenanceRequest =
+                await _context.MaintenanceRequests
+                    .FirstOrDefaultAsync(
+                        r => r.RequestId == requestid
+                    );
 
             if (maintenanceRequest == null)
             {
                 return NotFound();
             }
 
-            if (maintenanceRequest.AssignedTechnicianId != currentTechnician)
+            if (
+                maintenanceRequest.AssignedTechnicianId !=
+                currentTechnician
+            )
             {
                 return Forbid();
             }
 
-            if (maintenanceRequest.RequestStatus != "Received")
+            if (
+                maintenanceRequest.RequestStatus !=
+                "Received"
+            )
             {
-                return RedirectToAction(nameof(MyRequests));
+                return RedirectToAction(
+                    nameof(MyRequests)
+                );
             }
 
-            maintenanceRequest.RequestStatus = "In Progress";
+            maintenanceRequest.RequestStatus =
+                "In Progress";
 
             AddNotification(
                 maintenanceRequest,
@@ -166,33 +212,43 @@ namespace DeviceMaintenanceSystem.Controllers
                 $"Maintenance has started for request #{maintenanceRequest.RequestId}. Your device is currently under maintenance."
             );
 
-            return RedirectToAction(nameof(MyRequests));
+            return RedirectToAction(
+                nameof(MyRequests)
+            );
         }
 
         // =========================================
         // COMPLETE REQUEST
-        // kept for compatibility with existing view
         // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CompleteRequest(int requestid)
+        public async Task<IActionResult> CompleteRequest(
+            int requestid)
         {
-            var currentTechnician = User.Identity?.Name;
+            var currentTechnician =
+                User.Identity?.Name;
 
-            var maintenanceRequest = await _context.MaintenanceRequests
-                .FirstOrDefaultAsync(r => r.RequestId == requestid);
+            var maintenanceRequest =
+                await _context.MaintenanceRequests
+                    .FirstOrDefaultAsync(
+                        r => r.RequestId == requestid
+                    );
 
             if (maintenanceRequest == null)
             {
                 return NotFound();
             }
 
-            if (maintenanceRequest.AssignedTechnicianId != currentTechnician)
+            if (
+                maintenanceRequest.AssignedTechnicianId !=
+                currentTechnician
+            )
             {
                 return Forbid();
             }
 
-            maintenanceRequest.RequestStatus = "Completed";
+            maintenanceRequest.RequestStatus =
+                "Completed";
 
             AddNotification(
                 maintenanceRequest,
@@ -207,7 +263,9 @@ namespace DeviceMaintenanceSystem.Controllers
                 $"Maintenance request #{maintenanceRequest.RequestId} has been completed. Your device is ready for pickup."
             );
 
-            return RedirectToAction(nameof(MyRequests));
+            return RedirectToAction(
+                nameof(MyRequests)
+            );
         }
 
         // =========================================
@@ -224,25 +282,113 @@ namespace DeviceMaintenanceSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("DeviceName,RequestDescription")]
+            [Bind(
+                "DeviceName,RequestDescription,ApplicantPhone,OfficeNumber,Department,Building"
+            )]
             MaintenanceRequest maintenanceRequest)
         {
-            maintenanceRequest.UserId = User.Identity?.Name ?? string.Empty;
-            maintenanceRequest.RequestDate = DateTime.Now;
-            maintenanceRequest.RequestStatus = "Pending";
-            maintenanceRequest.DeviceId = null;
-            maintenanceRequest.DeviceName = maintenanceRequest.DeviceName?.Trim() ?? string.Empty;
+            maintenanceRequest.UserId =
+                User.Identity?.Name ??
+                string.Empty;
 
-            if (string.IsNullOrWhiteSpace(maintenanceRequest.DeviceName))
+            maintenanceRequest.RequestDate =
+                DateTime.Now;
+
+            maintenanceRequest.RequestStatus =
+                "Pending";
+
+            maintenanceRequest.DeviceId =
+                null;
+
+            maintenanceRequest.DeviceName =
+                maintenanceRequest.DeviceName?.Trim()
+                ?? string.Empty;
+
+            maintenanceRequest.ApplicantPhone =
+                maintenanceRequest.ApplicantPhone?.Trim()
+                ?? string.Empty;
+
+            maintenanceRequest.OfficeNumber =
+                maintenanceRequest.OfficeNumber?.Trim()
+                ?? string.Empty;
+
+            maintenanceRequest.Department =
+                maintenanceRequest.Department?.Trim()
+                ?? string.Empty;
+
+            maintenanceRequest.Building =
+                maintenanceRequest.Building?.Trim()
+                ?? string.Empty;
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.DeviceName
+                )
+            )
             {
-                ModelState.AddModelError("DeviceName", "Please enter the device name.");
+                ModelState.AddModelError(
+                    "DeviceName",
+                    "Please enter the device name."
+                );
             }
 
-            if (string.IsNullOrWhiteSpace(maintenanceRequest.RequestDescription))
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.RequestDescription
+                )
+            )
             {
                 ModelState.AddModelError(
                     "RequestDescription",
                     "Please describe the maintenance issue."
+                );
+            }
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.ApplicantPhone
+                )
+            )
+            {
+                ModelState.AddModelError(
+                    "ApplicantPhone",
+                    "Please enter your phone number."
+                );
+            }
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.OfficeNumber
+                )
+            )
+            {
+                ModelState.AddModelError(
+                    "OfficeNumber",
+                    "Please enter the office number."
+                );
+            }
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.Department
+                )
+            )
+            {
+                ModelState.AddModelError(
+                    "Department",
+                    "Please enter the department."
+                );
+            }
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.Building
+                )
+            )
+            {
+                ModelState.AddModelError(
+                    "Building",
+                    "Please enter the building."
                 );
             }
 
@@ -260,7 +406,10 @@ namespace DeviceMaintenanceSystem.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.MaintenanceRequests.Add(maintenanceRequest);
+                _context.MaintenanceRequests.Add(
+                    maintenanceRequest
+                );
+
                 await _context.SaveChangesAsync();
 
                 AddNotification(
@@ -276,10 +425,14 @@ namespace DeviceMaintenanceSystem.Controllers
                     $"Your maintenance request #{maintenanceRequest.RequestId} was submitted successfully and is waiting for department approval."
                 );
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    nameof(Index)
+                );
             }
 
-            return View(maintenanceRequest);
+            return View(
+                maintenanceRequest
+            );
         }
 
         // =========================================
@@ -291,18 +444,27 @@ namespace DeviceMaintenanceSystem.Controllers
             int requestid,
             string? approvalNote)
         {
-            var maintenanceRequest = await _context.MaintenanceRequests.FindAsync(requestid);
+            var maintenanceRequest =
+                await _context.MaintenanceRequests
+                    .FindAsync(requestid);
 
             if (maintenanceRequest == null)
             {
                 return NotFound();
             }
 
-            maintenanceRequest.RequestStatus = "Approved";
-            maintenanceRequest.ApprovalNote = string.IsNullOrWhiteSpace(approvalNote)
-                ? "Request approved."
-                : approvalNote;
-            maintenanceRequest.ApprovedByUserId = User.Identity?.Name;
+            maintenanceRequest.RequestStatus =
+                "Approved";
+
+            maintenanceRequest.ApprovalNote =
+                string.IsNullOrWhiteSpace(
+                    approvalNote
+                )
+                    ? "Request approved."
+                    : approvalNote;
+
+            maintenanceRequest.ApprovedByUserId =
+                User.Identity?.Name;
 
             AddNotification(
                 maintenanceRequest,
@@ -317,7 +479,9 @@ namespace DeviceMaintenanceSystem.Controllers
                 $"Your maintenance request #{maintenanceRequest.RequestId} has been approved by the department head."
             );
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                nameof(Index)
+            );
         }
 
         // =========================================
@@ -329,18 +493,27 @@ namespace DeviceMaintenanceSystem.Controllers
             int requestid,
             string? approvalNote)
         {
-            var maintenanceRequest = await _context.MaintenanceRequests.FindAsync(requestid);
+            var maintenanceRequest =
+                await _context.MaintenanceRequests
+                    .FindAsync(requestid);
 
             if (maintenanceRequest == null)
             {
                 return NotFound();
             }
 
-            maintenanceRequest.RequestStatus = "Rejected";
-            maintenanceRequest.ApprovalNote = string.IsNullOrWhiteSpace(approvalNote)
-                ? "Request rejected."
-                : approvalNote;
-            maintenanceRequest.ApprovedByUserId = User.Identity?.Name;
+            maintenanceRequest.RequestStatus =
+                "Rejected";
+
+            maintenanceRequest.ApprovalNote =
+                string.IsNullOrWhiteSpace(
+                    approvalNote
+                )
+                    ? "Request rejected."
+                    : approvalNote;
+
+            maintenanceRequest.ApprovedByUserId =
+                User.Identity?.Name;
 
             AddNotification(
                 maintenanceRequest,
@@ -349,9 +522,12 @@ namespace DeviceMaintenanceSystem.Controllers
 
             await _context.SaveChangesAsync();
 
-            var reason = string.IsNullOrWhiteSpace(maintenanceRequest.ApprovalNote)
-                ? string.Empty
-                : $" Reason: {maintenanceRequest.ApprovalNote}";
+            var reason =
+                string.IsNullOrWhiteSpace(
+                    maintenanceRequest.ApprovalNote
+                )
+                    ? string.Empty
+                    : $" Reason: {maintenanceRequest.ApprovalNote}";
 
             await SendRequesterEmailAsync(
                 maintenanceRequest,
@@ -359,7 +535,9 @@ namespace DeviceMaintenanceSystem.Controllers
                 $"Your maintenance request #{maintenanceRequest.RequestId} has been rejected by the department head.{reason}"
             );
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                nameof(Index)
+            );
         }
 
         // =========================================
@@ -372,11 +550,20 @@ namespace DeviceMaintenanceSystem.Controllers
             _context.Notifications.Add(
                 new Notification
                 {
-                    UserId = maintenanceRequest.UserId,
-                    RequestId = maintenanceRequest.RequestId,
-                    NotificationDescription = message,
-                    NotificationDate = DateTime.Now,
-                    IsRead = false
+                    UserId =
+                        maintenanceRequest.UserId,
+
+                    RequestId =
+                        maintenanceRequest.RequestId,
+
+                    NotificationDescription =
+                        message,
+
+                    NotificationDate =
+                        DateTime.Now,
+
+                    IsRead =
+                        false
                 }
             );
         }
@@ -386,15 +573,23 @@ namespace DeviceMaintenanceSystem.Controllers
             string subject,
             string message)
         {
-            var email = await GetRequesterEmailAsync(maintenanceRequest.UserId);
+            var email =
+                await GetRequesterEmailAsync(
+                    maintenanceRequest.UserId
+                );
 
             if (!string.IsNullOrWhiteSpace(email))
             {
-                await _emailService.SendAsync(email, subject, message);
+                await _emailService.SendAsync(
+                    email,
+                    subject,
+                    message
+                );
             }
         }
 
-        private async Task<string?> GetRequesterEmailAsync(string? userIdOrEmail)
+        private async Task<string?> GetRequesterEmailAsync(
+            string? userIdOrEmail)
         {
             if (string.IsNullOrWhiteSpace(userIdOrEmail))
             {
@@ -406,8 +601,13 @@ namespace DeviceMaintenanceSystem.Controllers
                 return userIdOrEmail;
             }
 
-            var user = await _userManager.FindByIdAsync(userIdOrEmail)
-                       ?? await _userManager.FindByNameAsync(userIdOrEmail);
+            var user =
+                await _userManager.FindByIdAsync(
+                    userIdOrEmail
+                )
+                ?? await _userManager.FindByNameAsync(
+                    userIdOrEmail
+                );
 
             return user?.Email;
         }

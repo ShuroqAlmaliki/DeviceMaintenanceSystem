@@ -49,7 +49,7 @@
                 </h2>
 
                 <p>
-                    Enter the device name and describe the maintenance issue.
+                    Enter the device and applicant information below.
                 </p>
 
             </div>
@@ -80,12 +80,10 @@
                             Device Name
                         </label>
 
-
                         <input asp-for="DeviceName"
                                type="text"
                                class="form-control"
                                placeholder="Enter device name..." />
-
 
                         <span asp-validation-for="DeviceName"
                               class="text-danger">
@@ -104,22 +102,108 @@
                             Request Description
                         </label>
 
-
                         <textarea asp-for="RequestDescription"
                                   class="form-control"
                                   placeholder="Describe the maintenance issue..."></textarea>
-
 
                         <span asp-validation-for="RequestDescription"
                               class="text-danger">
                         </span>
 
                     </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="ApplicantPhone" class="control-label"></label>
-                        <input asp-for="ApplicantPhone" class="form-control" placeholder="Enter your phone number (e.g., 05xxxxxxxx)" />
-                        <span asp-validation-for="ApplicantPhone" class="text-danger"></span>
+
+
+                    <!-- =================================
+                         PHONE NUMBER
+                         ================================= -->
+
+                    <div class="form-group">
+
+                        <label asp-for="ApplicantPhone">
+                            Phone Number
+                        </label>
+
+                        <input asp-for="ApplicantPhone"
+                               type="text"
+                               class="form-control"
+                               placeholder="05xxxxxxxx" />
+
+                        <span asp-validation-for="ApplicantPhone"
+                              class="text-danger">
+                        </span>
+
                     </div>
+
+
+                    <!-- =================================
+                         OFFICE NUMBER
+                         ================================= -->
+
+                    <div class="form-group">
+
+                        <label asp-for="OfficeNumber">
+                            Office Number
+                        </label>
+
+                        <input asp-for="OfficeNumber"
+                               type="text"
+                               class="form-control"
+                               placeholder="Enter office number..." />
+
+                        <span asp-validation-for="OfficeNumber"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- =================================
+                         DEPARTMENT
+                         ================================= -->
+
+                    <div class="form-group">
+
+                        <label asp-for="Department">
+                            Department
+                        </label>
+
+                        <input asp-for="Department"
+                               type="text"
+                               class="form-control"
+                               placeholder="Enter department name..." />
+
+                        <span asp-validation-for="Department"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- =================================
+                         BUILDING
+                         ================================= -->
+
+                    <div class="form-group">
+
+                        <label asp-for="Building">
+                            Building
+                        </label>
+
+                        <input asp-for="Building"
+                               type="text"
+                               class="form-control"
+                               placeholder="Enter building..." />
+
+                        <span asp-validation-for="Building"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- =================================
+                         NOTE
+                         ================================= -->
 
                     <div class="request-note">
 
@@ -129,12 +213,12 @@
 
                 </div>
 
+
                 <!-- =================================
                      ACTIONS
                      ================================= -->
 
                 <div class="form-actions">
-
 
                     <button type="submit"
                             class="create-button">
