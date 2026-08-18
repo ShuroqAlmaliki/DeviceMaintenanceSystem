@@ -330,26 +330,7 @@
 
                                     <td>
 
-                                        @if (!string.IsNullOrWhiteSpace(item.DeviceName))
-                                        {
-                                            @item.DeviceName
-                                        }
-
-                                        @if (
-                                            string.IsNullOrWhiteSpace(item.DeviceName) &&
-                                            item.Device != null
-                                        )
-                                        {
-                                            @item.Device.DeviceName
-                                        }
-
-                                        @if (
-                                            string.IsNullOrWhiteSpace(item.DeviceName) &&
-                                            item.Device == null
-                                        )
-                                        {
-                                            <text>Unknown Device</text>
-                                        }
+                                        @(!string.IsNullOrEmpty(item.DeviceName) ? item.DeviceName : (item.Device?.DeviceName ?? "Unknown Device"))
 
                                     </td>
 

@@ -45,6 +45,11 @@ namespace DeviceMaintenanceSystem.Models
         // وقت استلام الفني للطلب
         public DateTime? AssignedDate { get; set; }
 
+        [Display(Name = "Phone Number")]
+        [Required(ErrorMessage = "Please enter your phone number")]
+        [Phone(ErrorMessage = "Invalid phone number format")]
+        public string ApplicantPhone { get; set; }
+
 
         // =========================================
         // NAVIGATION PROPERTIES
