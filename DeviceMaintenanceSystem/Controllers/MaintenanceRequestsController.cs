@@ -254,7 +254,7 @@ namespace DeviceMaintenanceSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind(
-                "DeviceName,RequestDescription"
+                "DeviceName,RequestDescription,ApplicantPhone"
             )]
             MaintenanceRequest maintenanceRequest)
         {

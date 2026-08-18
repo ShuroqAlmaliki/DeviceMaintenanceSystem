@@ -151,6 +151,8 @@
 
                                 <th>User</th>
 
+                                <th>Phone Number</th>
+                                
                                 <th>Device</th>
 
                                 <th>Description</th>
@@ -181,9 +183,13 @@
                                         @item.UserId
                                     </td>
 
+                                    <td>
+                                    @item.ApplicantPhone
+                                    </td>
+
 
                                     <td>
-                                        @(item.Device?.DeviceName ?? "Unknown Device")
+                                        @item.DeviceName
                                     </td>
 
 
